@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".Receipt"
+              android:orientation="vertical"
+android:background="@drawable/background">
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:text="Total Price"
+    android:textSize="20dp"
+    android:gravity="center"
+    android:id="@+id/TotalpriceText"/>
+
+
+
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+        android:layout_below="@+id/TotalpriceText"
+        android:id="@+id/receipttable">
+
+            <TableRow>
+                <TextView
+                        android:text="Name"
+                        android:padding="5dp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:gravity="center"/>
+                <TextView
+                        android:text="Price"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+                <TextView
+                        android:text="Barcode"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/tablerow">
+                <TextView
+                        android:text="Clover"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+                <TextView
+                        android:text="9"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+
+                <TextView
+                        android:text="56469132"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+            </TableRow>
+
+        </TableLayout>
+
+
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/resetreceipt" android:text="Reset Receipt"
+            android:layout_gravity="center"
+    />
+
+</LinearLayout>
