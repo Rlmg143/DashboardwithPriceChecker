@@ -94,7 +94,7 @@ public class HomeFragment extends Fragment {
                 Gson gson = new Gson();
                 Type type = new TypeToken<ArrayList<Item>>() {}.getType();
                 List<Item> list = gson.fromJson(response, type);
-//                System.out.println(list);
+                System.out.println(list);
 
                 for(int i = 0; i < list.size(); i++){
                     String productData = list.get(i).toString();
