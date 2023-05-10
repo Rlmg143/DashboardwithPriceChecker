@@ -4,7 +4,7 @@
           android:id="@+id/mnu_home"
           android:icon="@drawable/ic_home"/>
 
-    <item android:title="Product Finder"
+    <item android:title="Search Product"
           android:id="@+id/mnu_product"
           android:icon="@drawable/cart"/>
 

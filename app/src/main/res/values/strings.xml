@@ -1,5 +1,26 @@
 <resources>
     <string name="app_name">Dashboard with PriceChecker</string>
+    <string name="category_all">All</string>
+
+    <string-array name="food_category_array">
+        <item>Food</item>
+            <item>Candy</item>
+            <item>Canned Goods</item>
+            <item>Condiments</item>
+            <item>Beverages</item>W
+            <item>Chips</item>
+            <item>Cereals</item>
+            <item>Noodles</item>
+            <item>Frozen</item>
+        </string-array>
+
+    <string-array name="non_food_category_array">
+        <item>Non-Food</item>
+        <item>Hygiene</item>
+        <item>Cigarrete</item>
+        <item>Others</item>
+    </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="barcode_search_hint">Barcode goes here</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.dashboardwithpricechecker;
 
+import android.content.SharedPreferences;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
+
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -95,11 +97,5 @@ public class MainActivity extends AppCompatActivity {
 
         Product nescafecreamy = new Product("3", "Nescafe", R.drawable.nescafecream, "beverage");
         productList.add(nescafecreamy);
-    }
-    private void setUplist() {
-        listView =(ListView) findViewById(R.id.listview);
-
-        ProductAdapter adapter = new ProductAdapter(getApplicationContext(), 0, productList);
-        listView.setAdapter(adapter);
     }
 }

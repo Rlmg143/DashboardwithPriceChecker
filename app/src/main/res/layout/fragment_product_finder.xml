@@ -5,49 +5,45 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation = "vertical"
+        android:orientation="vertical"
         tools:context=".MainActivity">
-
     <android.widget.SearchView
             android:id="@+id/productlistSearchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:iconifiedByDefault = "false"
-            app:queryHint="Search" />
-    <LinearLayout android:layout_width = "match_parent"
-                  android:layout_height = "wrap_content"
-                  android:orientation ="horizontal">
-        <Button android:layout_width = "0dp"
-                android:layout_weight = "1"
-                android:layout_height = "match_parent"
-                android:text = "All"
-                android:id = "@+id/allbutton"
-                android:onClick = "allFilterpressed"></Button>
-
-        <Button android:layout_width = "0dp"
-                android:layout_weight = "1"
-                android:layout_height = "match_parent"
-                android:text = "Coffee"
-                android:id = "@+id/coffeebutton"
-                android:onClick = "coffeeFilterpressed">
-        </Button>
-        <Button android:layout_width = "0dp"
-                android:layout_weight = "1"
-                android:layout_height = "match_parent"
-                android:text = "Canton"
-                android:id = "@+id/cantonbutton"
-                android:onClick = "cantonFilterpressed">
-        </Button>
-
-
-
+            android:iconifiedByDefault="false"
+            app:queryHint="Search"/>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <Button
+                android:id="@+id/all_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="All"/>
+        <Spinner
+                android:id="@+id/food_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:entries="@array/food_category_array"/>
+        <Spinner
+                android:id="@+id/non_food_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:entries="@array/non_food_category_array"/>
     </LinearLayout>
-
-    <ListView
+    <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Hello World!"
-            android:id = "@+id/listview"/>
-
-
+            android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+                      android:gravity="center"
+                      android:id="@+id/listview" />
+    </ScrollView>
 </LinearLayout>

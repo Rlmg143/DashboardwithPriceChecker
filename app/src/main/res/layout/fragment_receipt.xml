@@ -1,76 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".Receipt"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".Receipt"
               android:orientation="vertical"
-android:background="@drawable/background">
+>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:text="Total Price"
-    android:textSize="20dp"
-    android:gravity="center"
-    android:id="@+id/TotalpriceText"/>
-
-
-
-
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-        android:layout_below="@+id/TotalpriceText"
-        android:id="@+id/receipttable">
-
-            <TableRow>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@color/purple_700"
+    >
+        <TextView
+                android:text="Your Receipt"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+        />
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+        >
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="7dp"
+            >
                 <TextView
-                        android:text="Name"
-                        android:padding="5dp"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                        android:text="Subtotal"
+                        android:textColor="@color/grey"
+                        android:textSize="12dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                />
                 <TextView
-                        android:text="Price"
-                        android:padding="5dp"
+                        android:id="@+id/subtotal_fReceipt"
+                        android:text="₱0.0"
+                        android:textColor="@color/grey"
+                        android:textSize="30dp"
+                        android:gravity="right"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+        >
+                <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/resetreceipt"
+                        android:text="Reset Receipt"
                         android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-                <TextView
-                        android:text="Barcode"
-                        android:padding="5dp"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-            </TableRow>
+                        android:layout_marginRight="8dp"
+                        android:backgroundTint="@color/cadmium_red"
+                        android:drawableLeft="@drawable/ic_baseline_delete_sweep_24"
+                        android:textSize="10dp"
 
-            <TableRow android:id="@+id/tablerow">
-                <TextView
-                        android:text="Clover"
-                        android:padding="5dp"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-                <TextView
-                        android:text="9"
-                        android:padding="5dp"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
+                />
 
-                <TextView
-                        android:text="56469132"
-                        android:padding="5dp"
-                        android:layout_weight="1"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-            </TableRow>
+<!--                <Button-->
+<!--                        android:id="@+id/btn_print_receipt"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Print receipt"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:backgroundTint="@color/emerald_green"-->
+<!--                        android:drawableLeft="@drawable/ic_baseline_print_24"-->
+<!--                        android:textSize="10dp"-->
 
-        </TableLayout>
+<!--                />-->
+        </LinearLayout>
+    </LinearLayout>
 
 
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:id="@+id/resetreceipt" android:text="Reset Receipt"
-            android:layout_gravity="center"
+    <EditText
+            android:id="@+id/search_fReceipt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:padding="10dp"
+            android:hint="Search an item"
+            android:inputType="text"
+            android:imeOptions=""
+            android:ems="10"
+            android:background="@drawable/barcode_bg"
     />
-
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/cart"
+        />
+    </ScrollView>
 </LinearLayout>
