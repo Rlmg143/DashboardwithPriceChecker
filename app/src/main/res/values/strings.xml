@@ -2,7 +2,7 @@
     <string name="app_name">Dashboard with PriceChecker</string>
     <string name="category_all">All</string>
 
-    <string-array name="food_category_array">
+    <string-array name="drop_down_items_food">
         <item>Food</item>
             <item>Candy</item>
             <item>Canned Goods</item>
@@ -14,7 +14,7 @@
             <item>Frozen</item>
         </string-array>
 
-    <string-array name="non_food_category_array">
+    <string-array name="drop_down_items_non_food">
         <item>Non-Food</item>
         <item>Hygiene</item>
         <item>Cigarrete</item>

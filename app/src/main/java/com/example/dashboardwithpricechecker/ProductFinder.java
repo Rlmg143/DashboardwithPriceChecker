@@ -27,6 +27,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProductFinder#newInstance} factory method to
@@ -38,6 +42,9 @@ public class ProductFinder extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private ImageButton showSidebarButton;
+    private boolean isSidebarVisible = false;
+    private LinearLayout sidebar;
 
     private String url = "http://192.168.254.106/zantua/admin/get_products.php";
 
@@ -79,6 +86,7 @@ public class ProductFinder extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -90,22 +98,8 @@ public class ProductFinder extends Fragment {
 
         SearchView searchView = view.findViewById(R.id.productlistSearchView);
 
-        spinner = view.findViewById(R.id.food_spinner);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View view, int arg2, long arg3) {
 
-                String selected = spinner.getSelectedItem().toString();
-                System.out.println(selected);
 
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-
-            }
-        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -119,6 +113,23 @@ public class ProductFinder extends Fragment {
                 return false;
             }
         });
+        showSidebarButton = view.findViewById(R.id.showSidebarButton);
+        sidebar = view.findViewById(R.id.sidebar);
+
+        // Set click listener for the showSidebarButton
+        showSidebarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show/hide the sidebar
+                if (sidebar.getVisibility() == View.VISIBLE) {
+                    hideSidebar();
+                } else {
+                    showSidebar();
+                }
+            }
+        });
+
+
 //        Button frozenBtn = (Button) view.findViewById(R.id.frozenBtn);
 //
 //
@@ -271,4 +282,41 @@ public class ProductFinder extends Fragment {
         cardContainer.addView(cardview);
         return cardContainer;
     }
+    private void showSidebar() {
+        // Animate the sidebar to slide in from right to left
+        Animation slideInAnimation = new TranslateAnimation(sidebar.getWidth(), 0, 0, 0);
+        slideInAnimation.setDuration(500);
+        sidebar.startAnimation(slideInAnimation);
+
+        // Make the sidebar visible
+        sidebar.setVisibility(View.VISIBLE);
+
+        isSidebarVisible = true;
+    }
+
+    private void hideSidebar() {
+        // Animate the sidebar to slide out from left to right
+        Animation slideOutAnimation = new TranslateAnimation(0, sidebar.getWidth(), 0, 0);
+        slideOutAnimation.setDuration(500);
+        sidebar.startAnimation(slideOutAnimation);
+
+        // Set the sidebar visibility to GONE after the animation finishes
+        slideOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                sidebar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+
+        isSidebarVisible = false;
+    }
+
+
+
 }

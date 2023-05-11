@@ -1,49 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".MainActivity">
-    <android.widget.SearchView
-            android:id="@+id/productlistSearchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:iconifiedByDefault="false"
-            app:queryHint="Search"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context=".MainActivity">
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-        <Button
-                android:id="@+id/all_button"
+
+        <android.widget.SearchView
+                android:id="@+id/productlistSearchView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="All"/>
-        <Spinner
-                android:id="@+id/food_spinner"
-                android:layout_width="0dp"
+                android:iconifiedByDefault="false"
+                app:queryHint="Search" />
+
+        <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:entries="@array/food_category_array"/>
-        <Spinner
-                android:id="@+id/non_food_spinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:entries="@array/non_food_category_array"/>
+                android:orientation="horizontal">
+
+            <!-- Add any other views here if needed -->
+
+            <ImageButton
+                    android:id="@+id/showSidebarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_filter" />
+
+        </LinearLayout>
+
     </LinearLayout>
-    <ScrollView
+
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:orientation="vertical"
-                      android:gravity="center"
-                      android:id="@+id/listview" />
-    </ScrollView>
+            android:layout_height="match_parent">
+
+        <!-- Main content layout -->
+
+        <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id="@+id/listview" />
+
+        </ScrollView>
+
+        <include
+                layout="@layout/sidebar_layout"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
 </LinearLayout>

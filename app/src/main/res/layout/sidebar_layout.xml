@@ -1,0 +1,48 @@
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/sidebar"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#f1f1f1"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:layout_gravity="end">
+
+    <Button
+            android:id="@+id/foodButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Food" />
+
+    <Button
+            android:id="@+id/nonFoodButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Non-food" />
+
+    <Spinner
+            android:id="@+id/dropView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/drop_down_items_food" />
+
+    <Spinner
+            android:id="@+id/dropView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/drop_down_items_non_food" />
+
+    <EditText
+            android:id="@+id/textField1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Minimum" />
+
+    <EditText
+            android:id="@+id/textField2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Maximum" />
+
+</LinearLayout>
