@@ -1,48 +1,172 @@
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/sidebar"
-        android:layout_width="200dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#f1f1f1"
-        android:visibility="gone"
-        android:padding="10dp"
-        android:layout_gravity="end">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/sidebar"
+              android:layout_width="200dp"
+              android:layout_height="match_parent"
+              android:background="#f1f1f1"
+              android:padding="10dp"
+              android:layout_gravity="end"
+              android:orientation="vertical">
 
-    <Button
-            android:id="@+id/foodButton"
+    <GridLayout
+            android:id="@+id/sidebarGridLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Food" />
+            android:columnCount="2"
+            android:rowCount="1">
 
-    <Button
-            android:id="@+id/nonFoodButton"
+        <!-- CheckBoxGroup1 LinearLayout -->
+        <LinearLayout
+                android:id="@+id/checkBoxGroup1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+
+            <TextView
+                    android:id="@+id/FoodTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Food"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp" />
+            <CheckBox
+                    android:id="@+id/checkBoxFood1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Candy" />
+
+            <CheckBox
+                    android:id="@+id/checkBoxFood2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Canned Goods" />
+
+            <CheckBox
+                    android:id="@+id/checkBoxFood3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Condiments" />
+
+            <CheckBox
+                    android:id="@+id/checkBoxFood4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Beverages" />
+
+            <CheckBox
+                    android:id="@+id/checkBoxFood5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chips" />
+
+            <CheckBox
+                    android:id="@+id/checkBoxFood6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cereals" />
+
+            <CheckBox
+                    android:id="@+id/checkBoxFood7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Noodles" />
+
+            <CheckBox
+                    android:id="@+id/checkBoxFood8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Frozen" />
+
+            <!-- Add more CheckBoxes for each food item -->
+
+        </LinearLayout>
+
+        <!-- CheckBoxGroup2 LinearLayout -->
+        <LinearLayout
+                android:id="@+id/checkBoxGroup2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+
+            <!-- TextView for non-food items -->
+            <TextView
+                    android:id="@+id/nonFoodTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Non-Food"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp" />
+            <CheckBox
+                    android:id="@+id/checkBoxNonFood1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hygiene" />
+            <CheckBox
+                    android:id="@+id/checkBoxNonFood2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cigarette" />
+            <CheckBox
+                    android:id="@+id/checkBoxNonFood3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Others" />
+        </LinearLayout>
+    </GridLayout>
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Non-food" />
-
-    <Spinner
-            android:id="@+id/dropView1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/drop_down_items_food" />
-
-    <Spinner
-            android:id="@+id/dropView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/drop_down_items_non_food" />
-
+            android:layout_below="@id/sidebarGridLayout">
+        <TextView
+                android:id="@+id/PriceRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price Range"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp" />
     <EditText
             android:id="@+id/textField1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Minimum" />
-
+            android:layout_below="@id/PriceRange"
+            android:hint="Minimum"/>
     <EditText
             android:id="@+id/textField2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/textField1"
             android:hint="Maximum" />
-
+    </RelativeLayout>
+    <LinearLayout
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+        <Button
+                android:id="@+id/doneButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Done"
+                android:layout_marginEnd="8dp"
+                app:iconPadding="24dp" />
+        <Button
+                android:id="@+id/clearButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Clear" />
+    </LinearLayout>
 </LinearLayout>
