@@ -34,49 +34,49 @@
                     android:paddingBottom="8dp"
                     android:paddingTop="8dp" />
             <CheckBox
-                    android:id="@+id/checkBoxFood1"
+                    android:id="@+id/candyCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Candy" />
 
             <CheckBox
-                    android:id="@+id/checkBoxFood2"
+                    android:id="@+id/cannedGoodsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Canned Goods" />
 
             <CheckBox
-                    android:id="@+id/checkBoxFood3"
+                    android:id="@+id/condimentsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Condiments" />
 
             <CheckBox
-                    android:id="@+id/checkBoxFood4"
+                    android:id="@+id/beveragesCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Beverages" />
 
             <CheckBox
-                    android:id="@+id/checkBoxFood5"
+                    android:id="@+id/chipsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Chips" />
 
             <CheckBox
-                    android:id="@+id/checkBoxFood6"
+                    android:id="@+id/cerealsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cereals" />
 
             <CheckBox
-                    android:id="@+id/checkBoxFood7"
+                    android:id="@+id/noodleCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Noodles" />
 
             <CheckBox
-                    android:id="@+id/checkBoxFood8"
+                    android:id="@+id/frozenCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Frozen" />
@@ -105,17 +105,17 @@
                     android:paddingBottom="8dp"
                     android:paddingTop="8dp" />
             <CheckBox
-                    android:id="@+id/checkBoxNonFood1"
+                    android:id="@+id/hygieneCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hygiene" />
             <CheckBox
-                    android:id="@+id/checkBoxNonFood2"
+                    android:id="@+id/cigaretteCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cigarette" />
             <CheckBox
-                    android:id="@+id/checkBoxNonFood3"
+                    android:id="@+id/othersCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Others" />
@@ -155,7 +155,7 @@
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
         <Button
-                android:id="@+id/doneButton"
+                android:id="@+id/filterButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"

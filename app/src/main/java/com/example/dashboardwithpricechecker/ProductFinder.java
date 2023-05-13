@@ -45,6 +45,11 @@ public class ProductFinder extends Fragment {
     private ImageButton showSidebarButton;
     private boolean isSidebarVisible = false;
     private LinearLayout sidebar;
+    private ArrayList<String> filters = new ArrayList<>();
+    private ArrayList<CheckBox> checkBoxes = new ArrayList<>();
+    private ArrayList<Item> filteredItems = new ArrayList<>();
+    private Button filterButton;
+    SearchView searchView;
 
     private String url = "http://192.168.254.106/zantua/admin/get_products.php";
 
@@ -96,9 +101,25 @@ public class ProductFinder extends Fragment {
         View view = inflater.inflate(R.layout.fragment_product_finder, container, false);
         fetchData(view);
 
-        SearchView searchView = view.findViewById(R.id.productlistSearchView);
+        searchView = view.findViewById(R.id.productlistSearchView);
 
+        getCheckboxes(view);
 
+        filterButton = view.findViewById(R.id.filterButton);
+
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filters.clear();
+                for (CheckBox item : checkBoxes) {
+                    if (item.isChecked()) {
+                        filters.add(item.getText().toString().toLowerCase());
+                    }
+                }
+                System.out.println(filters);
+                fetchData(view);
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -158,34 +179,75 @@ public class ProductFinder extends Fragment {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println(response);
                 products.removeAllViews();
                 Gson gson = new Gson();
                 Type type = new TypeToken<ArrayList<Item>>() {
                 }.getType();
                 List<Item> list = gson.fromJson(response, type);
+                System.out.println(list);
+                if (!filters.isEmpty()) {
+                    filteredItems.clear();
+                    for (int i = 0; i < list.size(); i++) {
+                        if (filters.contains(list.get(i).getTag().split(",")[0].toLowerCase())) {
+                            if (!searchView.getQuery().toString().isEmpty()){
+                                if (list.get(i).getName().toLowerCase().contains(searchView.getQuery().toString().toLowerCase())){
+                                    filteredItems.add(list.get(i));
+                                }
+                            } else {
+                                filteredItems.add(list.get(i));
+                            }
 
-                for (int i = 0; i < list.size(); i++) {
-                    try {
-                        LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
-                        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
+                        }
+                    }
 
-                        rowParams.setMargins(20, 20, 20, 20);
-                        row.setLayoutParams(rowParams);
-                        LinearLayout cardview = createItemCard(list.get(i).getName(), list.get(i).getPrice(), list.get(i).getTag(), list.get(i).getImg(), list.get(i).toString());
-                        LinearLayout cardview1 = createItemCard(list.get(i + 1).getName(), list.get(i + 1).getPrice(), list.get(i + 1).getTag(), list.get(i + 1).getImg(), list.get(i + 1).toString());
-                        i += 1;
-                        row.addView(cardview);
-                        row.addView(cardview1);
-                        products.addView(row);
+                    for (int i = 0; i < filteredItems.size(); i++) {
+                        try {
+                            if (filters.contains(filteredItems.get(i).getTag().split(",")[0].toLowerCase())) {
+                                LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
+                                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
 
-                    } catch (Exception e) {
-                        System.out.println("Error: " + i + " " + e.getMessage());
+                                rowParams.setMargins(20, 20, 20, 20);
+                                row.setLayoutParams(rowParams);
+                                LinearLayout cardview = createItemCard(filteredItems.get(i).getName(), filteredItems.get(i).getPrice(), filteredItems.get(i).getTag(), filteredItems.get(i).getImg(), filteredItems.get(i).toString());
+                                LinearLayout cardview1 = createItemCard(filteredItems.get(i + 1).getName(), filteredItems.get(i + 1).getPrice(), filteredItems.get(i + 1).getTag(), filteredItems.get(i + 1).getImg(), filteredItems.get(i + 1).toString());
+                                i += 1;
+                                row.addView(cardview);
+                                row.addView(cardview1);
+                                products.addView(row);
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error: " + i + " " + e.getMessage());
+                        }
+                    }
+//
+
+                } else {
+                    for (int i = 0; i < list.size(); i++) {
+                        try {
+                            LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
+                            LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+
+                            rowParams.setMargins(20, 20, 20, 20);
+                            row.setLayoutParams(rowParams);
+                            LinearLayout cardview = createItemCard(list.get(i).getName(), list.get(i).getPrice(), list.get(i).getTag(), list.get(i).getImg(), list.get(i).toString());
+                            LinearLayout cardview1 = createItemCard(list.get(i + 1).getName(), list.get(i + 1).getPrice(), list.get(i + 1).getTag(), list.get(i + 1).getImg(), list.get(i + 1).toString());
+                            i += 1;
+                            row.addView(cardview);
+                            row.addView(cardview1);
+                            products.addView(row);
+
+                        } catch (Exception e) {
+                            System.out.println("Error: " + i + " " + e.getMessage());
+                        }
                     }
                 }
+
 
             }
         }, new Response.ErrorListener() {
@@ -257,7 +319,7 @@ public class ProductFinder extends Fragment {
         );
         categoryParams.setMargins(0, 8, 0, 8);
         category.setLayoutParams(categoryParams);
-        category.setText("FOOD");
+        category.setText(categ.split(",")[0]);
         category.setTextSize(12);
         category.setBackgroundResource(R.drawable.round_corners);
         category.setTextColor(Color.WHITE);
@@ -282,6 +344,7 @@ public class ProductFinder extends Fragment {
         cardContainer.addView(cardview);
         return cardContainer;
     }
+
     private void showSidebar() {
         // Animate the sidebar to slide in from right to left
         Animation slideInAnimation = new TranslateAnimation(sidebar.getWidth(), 0, 0, 0);
@@ -303,7 +366,8 @@ public class ProductFinder extends Fragment {
         // Set the sidebar visibility to GONE after the animation finishes
         slideOutAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -311,12 +375,26 @@ public class ProductFinder extends Fragment {
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
 
         isSidebarVisible = false;
     }
 
+    private void getCheckboxes(View view) {
 
+        checkBoxes.add(view.findViewById(R.id.candyCheckBox));
+        checkBoxes.add(view.findViewById(R.id.cannedGoodsCheckBox));
+        checkBoxes.add(view.findViewById(R.id.condimentsCheckBox));
+        checkBoxes.add(view.findViewById(R.id.beveragesCheckBox));
+        checkBoxes.add(view.findViewById(R.id.chipsCheckBox));
+        checkBoxes.add(view.findViewById(R.id.cerealsCheckBox));
+        checkBoxes.add(view.findViewById(R.id.noodleCheckBox));
+        checkBoxes.add(view.findViewById(R.id.frozenCheckBox));
+        checkBoxes.add(view.findViewById(R.id.hygieneCheckBox));
+        checkBoxes.add(view.findViewById(R.id.cigaretteCheckBox));
+        checkBoxes.add(view.findViewById(R.id.othersCheckBox));
+    }
 
 }
