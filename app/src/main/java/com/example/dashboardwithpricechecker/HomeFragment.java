@@ -94,7 +94,6 @@ public class HomeFragment extends Fragment {
                 Gson gson = new Gson();
                 Type type = new TypeToken<ArrayList<Item>>() {}.getType();
                 List<Item> list = gson.fromJson(response, type);
-                System.out.println(list);
 
                 for(int i = 0; i < list.size(); i++){
                     String productData = list.get(i).toString();
@@ -144,7 +143,7 @@ public class HomeFragment extends Fragment {
                     );
                     categoryParams.setMargins(0, 8, 0, 8);
                     category.setLayoutParams(categoryParams);
-                    category.setText("FOOD");
+                    category.setText(list.get(i).getTag().split(",")[0]);
                     category.setTextSize(12);
                     category.setBackgroundResource(R.drawable.round_corners);
                     category.setTextColor(Color.WHITE);

@@ -184,7 +184,6 @@ public class ProductFinder extends Fragment {
                 Type type = new TypeToken<ArrayList<Item>>() {
                 }.getType();
                 List<Item> list = gson.fromJson(response, type);
-                System.out.println(list);
                 if (!filters.isEmpty()) {
                     filteredItems.clear();
                     for (int i = 0; i < list.size(); i++) {
