@@ -85,79 +85,87 @@ public class HomeFragment extends Fragment {
 
 
     private void fetchData(View view) {
+        LinearLayout parent = view.findViewById(R.id.parentLinear);
         LinearLayout topProducts = view.findViewById(R.id.topProducts);
-
+        TextView notice = view.findViewById(R.id.noTopProductsNotice);
         queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
-                Type type = new TypeToken<ArrayList<Item>>() {}.getType();
+                Type type = new TypeToken<ArrayList<Item>>() {
+                }.getType();
                 List<Item> list = gson.fromJson(response, type);
 
-                for(int i = 0; i < list.size(); i++){
-                    String productData = list.get(i).toString();
-                    LinearLayout productRow = new LinearLayout(getActivity().getApplicationContext());
+                if (list.size() > 0) {
+                    ((ViewGroup) notice.getParent()).removeView(notice);
+                }
+                for (int i = 0; i < list.size(); i++) {
+                    if (Integer.parseInt(list.get(i).getUnitSold()) > 0) {
+                        String productData = list.get(i).toString();
+                        LinearLayout productRow = new LinearLayout(getActivity().getApplicationContext());
 
-                    productRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        productRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-                    ImageView image = new ImageView(getActivity().getApplicationContext());
-                    image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
-                    String imageUrl = list.get(i).getImg().isEmpty() ? "http://192.168.254.106/zantua/img/products/prod-placeholder.png" : "http://192.168.254.106/zantua/img/products/" + list.get(i).getImg().split("/")[3];
-                    Glide.with(getActivity()).load(imageUrl).into(image);
-                    productRow.addView(image);
+                        ImageView image = new ImageView(getActivity().getApplicationContext());
+                        image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+                        String imageUrl = list.get(i).getImg() == null ? "http://192.168.254.106/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://192.168.254.106/zantua/img/products/prod-placeholder.png" : "http://192.168.254.106/zantua/img/products/" + list.get(i).getImg().split("/")[3];
+                        Glide.with(getActivity()).load(imageUrl).into(image);
+                        productRow.addView(image);
 
-                    LinearLayout productInfo = new LinearLayout(getActivity().getApplicationContext());
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParams.setMargins(10, 0,0,0);
-                    productInfo.setLayoutParams(layoutParams);
+                        LinearLayout productInfo = new LinearLayout(getActivity().getApplicationContext());
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParams.setMargins(10, 0, 0, 0);
+                        productInfo.setLayoutParams(layoutParams);
 
-                    productInfo.setOrientation(LinearLayout.VERTICAL);
-                    productRow.addView(productInfo);
+                        productInfo.setOrientation(LinearLayout.VERTICAL);
+                        productRow.addView(productInfo);
 
-                    TextView productName = new TextView(getActivity().getApplicationContext());
-                    productName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    productName.setText(list.get(i).getName());
-                    productName.setTypeface(null, Typeface.BOLD);
-                    productName.setTextSize(20);
-                    productInfo.addView(productName);
+                        TextView productName = new TextView(getActivity().getApplicationContext());
+                        productName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        productName.setText(list.get(i).getName());
+                        productName.setTypeface(null, Typeface.BOLD);
+                        productName.setTextSize(20);
+                        productInfo.addView(productName);
 
-                    TextView productDesc = new TextView(getActivity().getApplicationContext());
-                    productDesc.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    productDesc.setText("Sample description");
-                    productDesc.setTextSize(12);
-                    productInfo.addView(productDesc);
+                        TextView productDesc = new TextView(getActivity().getApplicationContext());
+                        productDesc.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        productDesc.setText("Sample description");
+                        productDesc.setTextSize(12);
+                        productInfo.addView(productDesc);
 
-                    TextView productPrice = new TextView(getActivity().getApplicationContext());
-                    productPrice.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    productPrice.setText("₱" + list.get(i).getPrice());
-                    productPrice.setTextSize(20);
-                    productPrice.setTypeface(null, Typeface.BOLD);
-                    productInfo.addView(productPrice);
+                        TextView productPrice = new TextView(getActivity().getApplicationContext());
+                        productPrice.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        productPrice.setText("₱" + list.get(i).getPrice());
+                        productPrice.setTextSize(20);
+                        productPrice.setTypeface(null, Typeface.BOLD);
+                        productInfo.addView(productPrice);
 
-                    TextView category = new TextView(getActivity().getApplicationContext());
-                    LinearLayout.LayoutParams categoryParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            1
-                    );
-                    categoryParams.setMargins(0, 8, 0, 8);
-                    category.setLayoutParams(categoryParams);
-                    category.setText(list.get(i).getTag().split(",")[0]);
-                    category.setTextSize(12);
-                    category.setBackgroundResource(R.drawable.round_corners);
-                    category.setTextColor(Color.WHITE);
-                    productInfo.addView(category);
+                        TextView category = new TextView(getActivity().getApplicationContext());
+                        LinearLayout.LayoutParams categoryParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                1
+                        );
+                        categoryParams.setMargins(0, 8, 0, 8);
+                        category.setLayoutParams(categoryParams);
+                        category.setText(list.get(i).getTag().split(",")[0]);
+                        category.setTextSize(12);
+                        category.setBackgroundResource(R.drawable.round_corners);
+                        category.setTextColor(Color.WHITE);
+                        productInfo.addView(category);
 
-                    productRow.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getActivity().getApplicationContext(), ProductDetails.class);
-                            intent.putExtra("productDetails", productData);
-                            startActivity(intent);
-                        }
-                    });
-                    topProducts.addView(productRow);
+                        productRow.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(getActivity().getApplicationContext(), ProductDetails.class);
+                                intent.putExtra("productDetails", productData);
+                                startActivity(intent);
+                            }
+                        });
+                        topProducts.addView(productRow);
+                    }
+
                 }
             }
         }, new Response.ErrorListener() {
@@ -167,7 +175,5 @@ public class HomeFragment extends Fragment {
             }
         });
         queue.add(request);
-
-
     }
 }

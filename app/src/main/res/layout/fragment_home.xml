@@ -10,15 +10,17 @@
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:orientation="vertical"
+                  android:id="@+id/parentLinear"
+
     >
         <ImageView
                 android:src="@drawable/zantualogo"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-
                 android:background="@color/white"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/imageView4"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView4"
         />
         <TextView
                 android:layout_width="match_parent"
@@ -44,10 +46,18 @@
                           android:orientation="vertical"
                           android:id="@+id/topProducts"
             />
-
         </LinearLayout>
-
+        <TextView
+                android:text="There are no top products."
+                android:textStyle="bold"
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="480dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:paddingBottom="10dp"
+                android:gravity="center"
+                android:id="@+id/noTopProductsNotice"/>
     </LinearLayout>
-
-
 </ScrollView>
