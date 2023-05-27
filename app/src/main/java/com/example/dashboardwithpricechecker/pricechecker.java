@@ -1,6 +1,9 @@
 package com.example.dashboardwithpricechecker;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
@@ -19,7 +22,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +45,8 @@ public class pricechecker extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    String ip = "192.168.165.245";
-    private String url = "http://" + ip + "/zantua/admin/get_product_with_barco de.php";
+    String ip = "192.168.254.106";
+    private String url = "http://" + ip + "/zantua/admin/get_product_with_barcode.php";
     String[] data = {};
     RequestQueue queue;
 
@@ -50,7 +56,8 @@ public class pricechecker extends Fragment {
     private TextView quantityLbl;
     private ImageView productImage;
     private int quantity = 0;
-    private String name = "", price = "", imageUrl = "";
+    private String name = "", price = "", imageUrl = "", tag = "";
+
 
     public pricechecker() {
         // Required empty public constructor
@@ -187,6 +194,7 @@ public class pricechecker extends Fragment {
                 if (!response.isEmpty()) {
                     note.setVisibility(View.GONE);
                     pName.setText(response.split("\\|")[0]);
+                    tag = response.split("\\|")[1];
                     pPrice.setText(response.split("\\|")[2]);
 
                     name = response.split("\\|")[0];
@@ -212,6 +220,95 @@ public class pricechecker extends Fragment {
             }
         });
         queue.add(request);
+        System.out.println(tag);
+        LinearLayout relatedProducts = view.findViewById(R.id.priceCheckerRelatedProducts);
+        StringRequest requestRelated = new StringRequest(Request.Method.POST, "http://" + ip + "/zantua/admin/get_product_with_category.php?tag=" + tag, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Gson gson = new Gson();
+                Type type = new TypeToken<ArrayList<Item>>() {
+                }.getType();
+                List<Item> list = gson.fromJson(response, type);
+                System.out.println(list);
+                for (int i = 0; i < list.size(); i++) {
+
+                    String productData = list.get(i).toString();
+                    LinearLayout productRow = new LinearLayout(getActivity().getApplicationContext());
+                    LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    productRowParams.setMargins(0, 0, 0, 20);
+                    productRow.setLayoutParams(productRowParams);
+
+                    ImageView image = new ImageView(getActivity().getApplicationContext());
+                    image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+                    String imageUrl = list.get(i).getImg() == null ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : "http://" + ip + "/zantua/img/products/" + list.get(i).getImg().split("/")[3];
+                    Glide.with(getActivity().getApplicationContext()).load(imageUrl).into(image);
+                    productRow.addView(image);
+
+                    LinearLayout productInfo = new LinearLayout(getActivity().getApplicationContext());
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(10, 0, 0, 0);
+                    productInfo.setLayoutParams(layoutParams);
+
+                    productInfo.setOrientation(LinearLayout.VERTICAL);
+                    productRow.addView(productInfo);
+
+                    TextView productName = new TextView(getActivity().getApplicationContext());
+                    productName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    productName.setText(list.get(i).getName());
+                    productName.setTypeface(null, Typeface.BOLD);
+                    productName.setTextSize(20);
+                    productInfo.addView(productName);
+
+                    TextView productDesc = new TextView(getActivity().getApplicationContext());
+                    productDesc.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    productDesc.setText("Sample description");
+                    productDesc.setTextSize(12);
+                    productInfo.addView(productDesc);
+
+                    TextView productPrice = new TextView(getActivity().getApplicationContext());
+                    productPrice.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    productPrice.setText("₱" + list.get(i).getPrice());
+                    productPrice.setTextSize(20);
+                    productPrice.setTypeface(null, Typeface.BOLD);
+                    productInfo.addView(productPrice);
+
+                    TextView category = new TextView(getActivity().getApplicationContext());
+                    LinearLayout.LayoutParams categoryParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            1
+                    );
+                    categoryParams.setMargins(0, 8, 0, 8);
+                    category.setLayoutParams(categoryParams);
+                    category.setText(list.get(i).getTag().split(",")[0]);
+                    category.setTextSize(12);
+                    category.setBackgroundResource(R.drawable.round_corners);
+                    category.setTextColor(Color.WHITE);
+                    productInfo.addView(category);
+
+                    productRow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity().getApplicationContext(), ProductDetails.class);
+                            intent.putExtra("productDetails", productData);
+                            startActivity(intent);
+                        }
+                    });
+                    relatedProducts.addView(productRow);
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+            }
+        });
+        queue.add(requestRelated);
     }
 
     public Item checkExist(String name, List<Item> list){

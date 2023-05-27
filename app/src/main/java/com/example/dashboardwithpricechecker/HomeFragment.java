@@ -37,7 +37,7 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     RequestQueue queue;
-    String ip = "192.168.165.245";
+    String ip = "192.168.254.106";
     private String url = "http://" + ip + "/zantua/admin/get_top_products.php";
 
     // TODO: Rename and change types of parameters

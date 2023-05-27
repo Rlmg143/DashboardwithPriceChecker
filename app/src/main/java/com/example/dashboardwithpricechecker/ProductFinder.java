@@ -45,7 +45,7 @@ public class ProductFinder extends Fragment {
     private ImageButton showSidebarButton;
     private boolean isSidebarVisible = false;
     private LinearLayout sidebar;
-    String ip = "192.168.165.245";
+    String ip = "192.168.254.106";
     private ArrayList<String> filters = new ArrayList<>();
     private ArrayList<CheckBox> checkBoxes = new ArrayList<>();
     private ArrayList<Item> filteredItems = new ArrayList<>();

@@ -1,14 +1,24 @@
 package com.example.dashboardwithpricechecker;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +31,17 @@ public class ProductDetails extends AppCompatActivity {
     private Button addToReceipt;
     private ImageView productImage;
     private String imageUrl;
-    String ip = "192.168.165.245";
+    String ip = "192.168.254.106";
+    RequestQueue queue;
+
+    private String url = "http://" + ip + "/zantua/admin/get_product_with_category.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_details);
-
         initComponent();
+        getRelateProducts();
     }
 
     private void initComponent() {
@@ -36,13 +49,13 @@ public class ProductDetails extends AppCompatActivity {
         if (extras != null) {
             final String details = extras.getString("productDetails");
             try {
-                System.out.println("Product details: " +  details);
+                url += "?tag=" + details.split(",")[3];
                 TextView name = findViewById(R.id.productName);
                 name.setText(details.split(",")[0]);
 
                 TextView price = findViewById(R.id.productPrice);
                 price.setText(details.split(",")[1]);
-            }catch (Exception e) {
+            } catch (Exception e) {
 
             }
 
@@ -54,8 +67,8 @@ public class ProductDetails extends AppCompatActivity {
 
             try {
                 imageUrl = "http://" + ip + "/zantua/img/products/" + details.split(",")[details.split(",").length - 1].split("/")[3];
-                Glide.with(this).load( imageUrl).into(productImage);
-            } catch (Exception e){
+                Glide.with(this).load(imageUrl).into(productImage);
+            } catch (Exception e) {
                 imageUrl = "http://" + ip + "/zantua/img/products/prod-placeholder.png";
                 Glide.with(this).load(imageUrl).into(productImage);
             }
@@ -93,7 +106,7 @@ public class ProductDetails extends AppCompatActivity {
                         double price = Double.parseDouble(details.split(",")[1]) * quantity;
 
                         Item item = checkExist(details.split(",")[0], cartContents);
-                        if (item == null){
+                        if (item == null) {
                             cartContents.add(new Item(details.split(",")[0], "" + price, quantity, "", "", "0", imageUrl));
                         } else {
                             double newPrice = Double.parseDouble(item.getPrice()) + price;
@@ -108,7 +121,7 @@ public class ProductDetails extends AppCompatActivity {
 
                         Toast.makeText(getApplicationContext(), "Item added to cart.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getApplicationContext(),"Please select at least 1(one) quantity.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Please select at least 1(one) quantity.", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -117,15 +130,108 @@ public class ProductDetails extends AppCompatActivity {
         }
     }
 
-    public Item checkExist(String name, List<Item> list){
-        System.out.println("Product name: " + name);
+    public Item checkExist(String name, List<Item> list) {
         Item item = null;
-        for(int i = 0; i < list.size(); i++){
-            if (list.get(i).getName().equalsIgnoreCase(name)){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getName().equalsIgnoreCase(name)) {
                 item = list.get(i);
                 break;
             }
         }
         return item;
+    }
+
+    private void getRelateProducts() {
+        LinearLayout parent = findViewById(R.id.prodDetailsLinearLayoutParent);
+        LinearLayout relatedProducts = findViewById(R.id.prodDetailsRelatedProducts);
+        queue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Gson gson = new Gson();
+                Type type = new TypeToken<ArrayList<Item>>() {
+                }.getType();
+                List<Item> list = gson.fromJson(response, type);
+                System.out.println(list);
+                for (int i = 0; i < list.size(); i++) {
+
+                    String productData = list.get(i).toString();
+                    LinearLayout productRow = new LinearLayout(getApplicationContext());
+                    LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    productRowParams.setMargins(0, 0, 0, 20);
+                    productRow.setLayoutParams(productRowParams);
+
+                    ImageView image = new ImageView(getApplicationContext());
+                    image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+                    String imageUrl = list.get(i).getImg() == null ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : "http://" + ip + "/zantua/img/products/" + list.get(i).getImg().split("/")[3];
+                    Glide.with(getApplicationContext()).load(imageUrl).into(image);
+                    productRow.addView(image);
+
+                    LinearLayout productInfo = new LinearLayout(getApplicationContext());
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(10, 0, 0, 0);
+                    productInfo.setLayoutParams(layoutParams);
+
+                    productInfo.setOrientation(LinearLayout.VERTICAL);
+                    productRow.addView(productInfo);
+
+                    TextView productName = new TextView(getApplicationContext());
+                    productName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    productName.setText(list.get(i).getName());
+                    productName.setTypeface(null, Typeface.BOLD);
+                    productName.setTextSize(20);
+                    productInfo.addView(productName);
+
+                    TextView productDesc = new TextView(getApplicationContext());
+                    productDesc.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    productDesc.setText("Sample description");
+                    productDesc.setTextSize(12);
+                    productInfo.addView(productDesc);
+
+                    TextView productPrice = new TextView(getApplicationContext());
+                    productPrice.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    productPrice.setText("₱" + list.get(i).getPrice());
+                    productPrice.setTextSize(20);
+                    productPrice.setTypeface(null, Typeface.BOLD);
+                    productInfo.addView(productPrice);
+
+                    TextView category = new TextView(getApplicationContext());
+                    LinearLayout.LayoutParams categoryParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            1
+                    );
+                    categoryParams.setMargins(0, 8, 0, 8);
+                    category.setLayoutParams(categoryParams);
+                    category.setText(list.get(i).getTag().split(",")[0]);
+                    category.setTextSize(12);
+                    category.setBackgroundResource(R.drawable.round_corners);
+                    category.setTextColor(Color.WHITE);
+                    productInfo.addView(category);
+
+                    productRow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), ProductDetails.class);
+                            intent.putExtra("productDetails", productData);
+                            startActivity(intent);
+                        }
+                    });
+                    relatedProducts.addView(productRow);
+
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+            }
+        });
+        queue.add(request);
     }
 }
