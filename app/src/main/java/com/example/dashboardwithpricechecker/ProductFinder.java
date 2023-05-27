@@ -45,13 +45,14 @@ public class ProductFinder extends Fragment {
     private ImageButton showSidebarButton;
     private boolean isSidebarVisible = false;
     private LinearLayout sidebar;
+    String ip = "192.168.165.245";
     private ArrayList<String> filters = new ArrayList<>();
     private ArrayList<CheckBox> checkBoxes = new ArrayList<>();
     private ArrayList<Item> filteredItems = new ArrayList<>();
     private Button filterButton;
     SearchView searchView;
 
-    private String url = "http://192.168.254.106/zantua/admin/get_products.php";
+    private String url = "http://" + ip + "/zantua/admin/get_products.php";
 
     Spinner spinner;
 
@@ -124,7 +125,7 @@ public class ProductFinder extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                url = "http://192.168.254.106/zantua/admin/get_products.php?query=" + query;
+                url = "http://" + ip + "/zantua/admin/get_products.php?query=" + query;
                 fetchData(view);
                 return false;
             }
@@ -138,7 +139,7 @@ public class ProductFinder extends Fragment {
         sidebar = view.findViewById(R.id.sidebar);
 
         // Set click listener for the showSidebarButton
-        showSidebarButton.setOnClickListener(new View.OnClickListener() {
+        showSidebarButton.setOnClickListener(new View.OnClickListener()  {
             @Override
             public void onClick(View v) {
                 // Show/hide the sidebar
@@ -292,7 +293,7 @@ public class ProductFinder extends Fragment {
 
         ImageView imageView = new ImageView(getActivity().getApplicationContext());
         imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 200));
-        Glide.with(getActivity()).load(image != null ? "http://192.168.254.106/zantua/img/products/" + image.split("/")[3] : "http://192.168.254.106/zantua/img/products/prod-placeholder.png").into(imageView);
+        Glide.with(getActivity()).load(image != null ? "http://" + ip + "/zantua/img/products/" + image.split("/")[3] : "http://" + ip + "/zantua/img/products/prod-placeholder.png").into(imageView);
 
         l1.addView(imageView);
 

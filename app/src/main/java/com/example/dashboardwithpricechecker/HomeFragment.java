@@ -37,7 +37,8 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     RequestQueue queue;
-    private String url = "http://192.168.254.106/zantua/admin/get_top_products.php";
+    String ip = "192.168.165.245";
+    private String url = "http://" + ip + "/zantua/admin/get_top_products.php";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -89,6 +90,7 @@ public class HomeFragment extends Fragment {
         LinearLayout topProducts = view.findViewById(R.id.topProducts);
         TextView notice = view.findViewById(R.id.noTopProductsNotice);
         queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -104,12 +106,16 @@ public class HomeFragment extends Fragment {
                     if (Integer.parseInt(list.get(i).getUnitSold()) > 0) {
                         String productData = list.get(i).toString();
                         LinearLayout productRow = new LinearLayout(getActivity().getApplicationContext());
-
-                        productRow.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        productRowParams.setMargins(0,0,0,20);
+                        productRow.setLayoutParams(productRowParams);
 
                         ImageView image = new ImageView(getActivity().getApplicationContext());
                         image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
-                        String imageUrl = list.get(i).getImg() == null ? "http://192.168.254.106/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://192.168.254.106/zantua/img/products/prod-placeholder.png" : "http://192.168.254.106/zantua/img/products/" + list.get(i).getImg().split("/")[3];
+                        String imageUrl = list.get(i).getImg() == null ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : "http://" + ip + "/zantua/img/products/" + list.get(i).getImg().split("/")[3];
                         Glide.with(getActivity()).load(imageUrl).into(image);
                         productRow.addView(image);
 

@@ -21,6 +21,7 @@ public class ProductDetails extends AppCompatActivity {
     private Button addToReceipt;
     private ImageView productImage;
     private String imageUrl;
+    String ip = "192.168.165.245";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +53,10 @@ public class ProductDetails extends AppCompatActivity {
             addToReceipt = findViewById(R.id.addToReceipt_pDetails);
 
             try {
-                imageUrl = "http://192.168.254.106/zantua/img/products/" + details.split(",")[details.split(",").length - 1].split("/")[3];
+                imageUrl = "http://" + ip + "/zantua/img/products/" + details.split(",")[details.split(",").length - 1].split("/")[3];
                 Glide.with(this).load( imageUrl).into(productImage);
             } catch (Exception e){
-                imageUrl = "http://192.168.254.106/zantua/img/products/prod-placeholder.png";
+                imageUrl = "http://" + ip + "/zantua/img/products/prod-placeholder.png";
                 Glide.with(this).load(imageUrl).into(productImage);
             }
 

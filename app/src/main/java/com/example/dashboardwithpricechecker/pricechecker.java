@@ -39,8 +39,8 @@ public class pricechecker extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    private String url = "http://192.168.254.106/zantua/admin/get_product_with_barcode.php";
+    String ip = "192.168.165.245";
+    private String url = "http://" + ip + "/zantua/admin/get_product_with_barco de.php";
     String[] data = {};
     RequestQueue queue;
 
@@ -159,7 +159,7 @@ public class pricechecker extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 System.out.println(query);
-                url = "http://192.168.254.106/zantua/admin/get_product_with_barcode.php?barcode=" + query;
+                url = "http://" + ip + "/zantua/admin/get_product_with_barcode.php?barcode=" + query;
                 fetchData(view);
                 return false;
             }
@@ -193,10 +193,10 @@ public class pricechecker extends Fragment {
                     price = response.split("\\|")[2];
 
                     try {
-                        imageUrl = "http://192.168.254.106/zantua/img/products/" + response.split("\\|")[response.split("\\|").length - 1].split("/")[3];
+                        imageUrl = "http://" + ip + "/zantua/img/products/" + response.split("\\|")[response.split("\\|").length - 1].split("/")[3];
                         Glide.with(getActivity()).load(imageUrl).into(productImage);
                     } catch (Exception e){
-                        imageUrl = "http://192.168.254.106/zantua/img/products/prod-placeholder.png";
+                        imageUrl = "http://" + ip + "/zantua/img/products/prod-placeholder.png";
                         Glide.with(getActivity()).load(imageUrl).into(productImage);
                     }
                 } else {
