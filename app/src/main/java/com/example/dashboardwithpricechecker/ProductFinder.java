@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.*;
 import android.widget.*;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -49,10 +47,22 @@ public class ProductFinder extends Fragment {
     private ArrayList<String> filters = new ArrayList<>();
     private ArrayList<CheckBox> checkBoxes = new ArrayList<>();
     private ArrayList<Item> filteredItems = new ArrayList<>();
+    View view;
+    Gson gson;
+    Type type;
+    String searchQuery = "";
+    List<Item> list;
+    LinearLayout products;
+    private String jsonResponse = "";
     private Button filterButton;
+    private Button clearButton;
     SearchView searchView;
+    ScrollView scrollView;
+    TextView noticeView;
+    TextView loadMoreView;
+    private int limiter = 20;
 
-    private String url = "http://" + ip + "/zantua/admin/get_products.php";
+    private String url = "http://" + ip + "/v2/zantua/admin/get_products.php";
 
     Spinner spinner;
 
@@ -99,39 +109,74 @@ public class ProductFinder extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_product_finder, container, false);
-        fetchData(view);
+        view = inflater.inflate(R.layout.fragment_product_finder, container, false);
+        gson = new Gson();
+        type = new TypeToken<ArrayList<Item>>() {
+        }.getType();
 
         searchView = view.findViewById(R.id.productlistSearchView);
+        scrollView = view.findViewById(R.id.scrollView);
+        noticeView = view.findViewById(R.id.noticeTextView);
+        loadMoreView = view.findViewById(R.id.loadMoreView);
+        filterButton = view.findViewById(R.id.filterButton);
+        clearButton = view.findViewById(R.id.clearButton);
+        products = view.findViewById(R.id.listview);
+
+        noticeView.setVisibility(View.VISIBLE);
 
         getCheckboxes(view);
-
-        filterButton = view.findViewById(R.id.filterButton);
+        request();
 
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (filters.isEmpty()) {
+                    filteredItems.clear();
+                    products.removeAllViews();
+                }
                 filters.clear();
                 for (CheckBox item : checkBoxes) {
                     if (item.isChecked()) {
                         filters.add(item.getText().toString().toLowerCase());
                     }
                 }
-                System.out.println(filters);
-                fetchData(view);
+                request();
             }
         });
 
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                for (CheckBox checkBox : checkBoxes) {
+                    checkBox.setChecked(false);
+                }
+                filters.clear();
+
+                if (!filteredItems.isEmpty()){
+                    filteredItems.clear();
+                    products.removeAllViews();
+                    request();
+                }
+
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                url = "http://" + ip + "/zantua/admin/get_products.php?query=" + query;
-                fetchData(view);
+                searchQuery = query;
+                url = "http://" + ip + "/v2/zantua/admin/get_products.php?query=" + query;
+                request();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    url = "http://" + ip + "/v2/zantua/admin/get_products.php";
+                    products.removeAllViews();
+                    request();
+                }
                 return false;
             }
         });
@@ -139,9 +184,24 @@ public class ProductFinder extends Fragment {
         sidebar = view.findViewById(R.id.sidebar);
 
         // Set click listener for the showSidebarButton
-        showSidebarButton.setOnClickListener(new View.OnClickListener()  {
+        showSidebarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int checkCount = 0;
+                for (CheckBox checkBox : checkBoxes) {
+                    if (checkBox.isChecked()) {
+                        checkCount += 1;
+                    }
+                }
+
+                if (checkCount < 1) {
+                    filterButton.setEnabled(false);
+                    clearButton.setEnabled(false);
+                } else {
+                    filterButton.setEnabled(true);
+                    clearButton.setEnabled(true);
+                }
+
                 // Show/hide the sidebar
                 if (sidebar.getVisibility() == View.VISIBLE) {
                     hideSidebar();
@@ -151,112 +211,103 @@ public class ProductFinder extends Fragment {
             }
         });
 
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (scrollView.getChildAt(0).getBottom() <= (scrollView.getHeight() + scrollView.getScrollY())) {
+                    if (filteredItems.size() >= 20) {
+                        scrollView.setPadding(0, 0, 0, 60);
+                        loadMoreView.setVisibility(View.VISIBLE);
+                    }
 
-//        Button frozenBtn = (Button) view.findViewById(R.id.frozenBtn);
-//
-//
-//        frozenBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
+                } else {
+                    scrollView.setPadding(0, 0, 0, 0);
+                    loadMoreView.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        loadMoreView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                limiter += 20;
+                scrollView.setPadding(0, 0, 0, 0);
+                loadMoreView.setVisibility(View.GONE);
+                fetchData();
+            }
+        });
 
         return view;
     }
 
-    private void fetchData(View view) {
+    private void fetchData() {
 
-        LinearLayout products = view.findViewById(R.id.listview);
-
-        TextView loadingText = new TextView(getActivity().getApplicationContext());
-        loadingText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        loadingText.setText("Loading items...");
-        loadingText.setTextSize(15);
-        products.addView(loadingText);
-
-        queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-
-        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                products.removeAllViews();
-                Gson gson = new Gson();
-                Type type = new TypeToken<ArrayList<Item>>() {
-                }.getType();
-                List<Item> list = gson.fromJson(response, type);
-                if (!filters.isEmpty()) {
-                    filteredItems.clear();
-                    for (int i = 0; i < list.size(); i++) {
-                        if (filters.contains(list.get(i).getTag().split(",")[0].toLowerCase())) {
-                            if (!searchView.getQuery().toString().isEmpty()){
-                                if (list.get(i).getName().toLowerCase().contains(searchView.getQuery().toString().toLowerCase())){
-                                    filteredItems.add(list.get(i));
-                                }
-                            } else {
-                                filteredItems.add(list.get(i));
-                            }
-
+        if (!filters.isEmpty()) {
+            products.removeAllViews();
+            filteredItems.clear();
+            for (int i = 0; i < list.size(); i++) {
+                if (filters.contains(list.get(i).getTag().split(",")[0].toLowerCase())) {
+                    if (!searchView.getQuery().toString().isEmpty()) {
+                        if (list.get(i).getName().toLowerCase().contains(searchView.getQuery().toString().toLowerCase())) {
+                            filteredItems.add(list.get(i));
                         }
+                    } else {
+                        filteredItems.add(list.get(i));
                     }
 
-                    for (int i = 0; i < filteredItems.size(); i++) {
-                        try {
-                            if (filters.contains(filteredItems.get(i).getTag().split(",")[0].toLowerCase())) {
-                                LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
-                                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                );
-
-                                rowParams.setMargins(20, 20, 20, 20);
-                                row.setLayoutParams(rowParams);
-                                LinearLayout cardview = createItemCard(filteredItems.get(i).getName(), filteredItems.get(i).getPrice(), filteredItems.get(i).getTag(), filteredItems.get(i).getImg(), filteredItems.get(i).toString());
-                                LinearLayout cardview1 = createItemCard(filteredItems.get(i + 1).getName(), filteredItems.get(i + 1).getPrice(), filteredItems.get(i + 1).getTag(), filteredItems.get(i + 1).getImg(), filteredItems.get(i + 1).toString());
-                                i += 1;
-                                row.addView(cardview);
-                                row.addView(cardview1);
-                                products.addView(row);
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Error: " + i + " " + e.getMessage());
-                        }
-                    }
-//
-
-                } else {
-                    for (int i = 0; i < list.size(); i++) {
-                        try {
-                            LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
-                            LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-
-                            rowParams.setMargins(20, 20, 20, 20);
-                            row.setLayoutParams(rowParams);
-                            LinearLayout cardview = createItemCard(list.get(i).getName(), list.get(i).getPrice(), list.get(i).getTag(), list.get(i).getImg(), list.get(i).toString());
-                            LinearLayout cardview1 = createItemCard(list.get(i + 1).getName(), list.get(i + 1).getPrice(), list.get(i + 1).getTag(), list.get(i + 1).getImg(), list.get(i + 1).toString());
-                            i += 1;
-                            row.addView(cardview);
-                            row.addView(cardview1);
-                            products.addView(row);
-
-                        } catch (Exception e) {
-                            System.out.println("Error: " + i + " " + e.getMessage());
-                        }
-                    }
                 }
-
-
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println(error.toString());
+
+            for (int i = 0; i < filteredItems.size(); i++) {
+                try {
+                    if (filters.contains(filteredItems.get(i).getTag().split(",")[0].toLowerCase())) {
+                        LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
+                        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+
+                        rowParams.setMargins(20, 20, 20, 20);
+                        row.setLayoutParams(rowParams);
+                        LinearLayout cardview = createItemCard(filteredItems.get(i).getName(), filteredItems.get(i).getPrice(), filteredItems.get(i).getTag(), filteredItems.get(i).getImg(), filteredItems.get(i).toString());
+                        LinearLayout cardview1 = createItemCard(filteredItems.get(i + 1).getName(), filteredItems.get(i + 1).getPrice(), filteredItems.get(i + 1).getTag(), filteredItems.get(i + 1).getImg(), filteredItems.get(i + 1).toString());
+                        i += 1;
+                        row.addView(cardview);
+                        row.addView(cardview1);
+                        products.addView(row);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error: " + i + " " + e.getMessage());
+                }
             }
-        });
-        queue.add(request);
+//
+        } else {
+            if (!searchQuery.isEmpty()) {
+                products.removeAllViews();
+                searchQuery = "";
+            }
+            for (int i = limiter - 20; i < limiter; i++) {
+                try {
+                    LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
+                    LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+
+                    rowParams.setMargins(20, 20, 20, 20);
+                    row.setLayoutParams(rowParams);
+                    LinearLayout cardview = createItemCard(list.get(i).getName(), list.get(i).getPrice(), list.get(i).getTag(), list.get(i).getImg(), list.get(i).toString());
+                    LinearLayout cardview1 = createItemCard(list.get(i + 1).getName(), list.get(i + 1).getPrice(), list.get(i + 1).getTag(), list.get(i + 1).getImg(), list.get(i + 1).toString());
+                    i += 1;
+                    row.addView(cardview);
+                    row.addView(cardview1);
+                    products.addView(row);
+
+                } catch (Exception e) {
+                    System.out.println("Error: " + i + " " + e.getMessage());
+                }
+            }
+        }
     }
 
     @NotNull
@@ -293,7 +344,7 @@ public class ProductFinder extends Fragment {
 
         ImageView imageView = new ImageView(getActivity().getApplicationContext());
         imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 200));
-        Glide.with(getActivity()).load(image != null ? "http://" + ip + "/zantua/img/products/" + image.split("/")[3] : "http://" + ip + "/zantua/img/products/prod-placeholder.png").into(imageView);
+        Glide.with(getActivity()).load(image != null ? "http://" + ip + "/v2/zantua/img/products/" + image.split("/")[3] : "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png").into(imageView);
 
         l1.addView(imageView);
 
@@ -395,6 +446,46 @@ public class ProductFinder extends Fragment {
         checkBoxes.add(view.findViewById(R.id.hygieneCheckBox));
         checkBoxes.add(view.findViewById(R.id.cigaretteCheckBox));
         checkBoxes.add(view.findViewById(R.id.othersCheckBox));
+
+        for (CheckBox checkBox : checkBoxes) {
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int checkCount = 0;
+                    for (CheckBox checkBox : checkBoxes) {
+                        if (checkBox.isChecked()) {
+                            checkCount += 1;
+                        }
+                    }
+
+                    if (checkCount < 1) {
+                        filterButton.setEnabled(false);
+                        clearButton.setEnabled(false);
+                    } else {
+                        filterButton.setEnabled(true);
+                        clearButton.setEnabled(true);
+                    }
+                }
+            });
+        }
     }
 
+    private void request() {
+        queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                jsonResponse = response;
+                noticeView.setVisibility(View.GONE);
+                list = gson.fromJson(jsonResponse, type);
+                fetchData();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+            }
+        });
+        queue.add(request);
+    }
 }

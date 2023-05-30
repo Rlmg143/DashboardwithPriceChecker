@@ -32,54 +32,54 @@
                     android:textColor="#000000"
                     android:textStyle="bold"
                     android:paddingBottom="8dp"
-                    android:paddingTop="8dp" />
+                    android:paddingTop="8dp"/>
             <CheckBox
                     android:id="@+id/candyCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Candy" />
+                    android:text="Candy"/>
 
             <CheckBox
                     android:id="@+id/cannedGoodsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Canned Goods" />
+                    android:text="Canned Goods"/>
 
             <CheckBox
                     android:id="@+id/condimentsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Condiments" />
+                    android:text="Condiments"/>
 
             <CheckBox
                     android:id="@+id/beveragesCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Beverages" />
+                    android:text="Beverages"/>
 
             <CheckBox
                     android:id="@+id/chipsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chips" />
+                    android:text="Chips"/>
 
             <CheckBox
                     android:id="@+id/cerealsCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cereals" />
+                    android:text="Cereals"/>
 
             <CheckBox
                     android:id="@+id/noodleCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Noodle" />
+                    android:text="Noodle"/>
 
             <CheckBox
                     android:id="@+id/frozenCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Frozen" />
+                    android:text="Frozen"/>
 
             <!-- Add more CheckBoxes for each food item -->
 
@@ -103,50 +103,28 @@
                     android:textColor="#000000"
                     android:textStyle="bold"
                     android:paddingBottom="8dp"
-                    android:paddingTop="8dp" />
+                    android:paddingTop="8dp"/>
             <CheckBox
                     android:id="@+id/hygieneCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hygiene" />
+                    android:text="Hygiene"/>
             <CheckBox
                     android:id="@+id/cigaretteCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cigarette" />
+                    android:text="Cigarette"/>
             <CheckBox
                     android:id="@+id/othersCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Others" />
+                    android:text="Others"/>
         </LinearLayout>
     </GridLayout>
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/sidebarGridLayout">
-        <TextView
-                android:id="@+id/PriceRange"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Price Range"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp" />
-    <EditText
-            android:id="@+id/textField1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/PriceRange"
-            android:hint="Minimum"/>
-    <EditText
-            android:id="@+id/textField2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textField1"
-            android:hint="Maximum" />
     </RelativeLayout>
     <LinearLayout
             android:id="@+id/buttonLayout"
@@ -161,12 +139,12 @@
                 android:layout_height="wrap_content"
                 android:text="Done"
                 android:layout_marginEnd="8dp"
-                app:iconPadding="24dp" />
+                app:iconPadding="24dp"/>
         <Button
                 android:id="@+id/clearButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Clear" />
+                android:text="Clear"/>
     </LinearLayout>
 </LinearLayout>

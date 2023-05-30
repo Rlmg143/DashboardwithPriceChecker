@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     RequestQueue queue;
     String ip = "192.168.254.106";
-    private String url = "http://" + ip + "/zantua/admin/get_top_products.php";
+    private String url = "http://" + ip + "/v2/zantua/admin/get_top_products.php";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -115,7 +115,7 @@ public class HomeFragment extends Fragment {
 
                         ImageView image = new ImageView(getActivity().getApplicationContext());
                         image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
-                        String imageUrl = list.get(i).getImg() == null ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : "http://" + ip + "/zantua/img/products/" + list.get(i).getImg().split("/")[3];
+                        String imageUrl = list.get(i).getImg() == null ? "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png" : "http://" + ip + "/v2/zantua/img/products/" + list.get(i).getImg().split("/")[3];
                         Glide.with(getActivity()).load(imageUrl).into(image);
                         productRow.addView(image);
 

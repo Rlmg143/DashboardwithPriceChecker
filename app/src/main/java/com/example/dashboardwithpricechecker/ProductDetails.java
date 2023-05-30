@@ -31,10 +31,11 @@ public class ProductDetails extends AppCompatActivity {
     private Button addToReceipt;
     private ImageView productImage;
     private String imageUrl;
+    private TextView tag;
     String ip = "192.168.254.106";
     RequestQueue queue;
 
-    private String url = "http://" + ip + "/zantua/admin/get_product_with_category.php";
+    private String url = "http://" + ip + "/v2/zantua/admin/get_product_with_category.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,14 @@ public class ProductDetails extends AppCompatActivity {
 
     private void initComponent() {
         Bundle extras = getIntent().getExtras();
+
+        productImage = findViewById(R.id.prodDetailsImage);
+        add = findViewById(R.id.add_pDetails);
+        minus = findViewById(R.id.minus_pDetails);
+        quantityLbl = findViewById(R.id.qty_pDetails);
+        addToReceipt = findViewById(R.id.addToReceipt_pDetails);
+        tag = findViewById(R.id.productCategory);
+
         if (extras != null) {
             final String details = extras.getString("productDetails");
             try {
@@ -55,21 +64,18 @@ public class ProductDetails extends AppCompatActivity {
 
                 TextView price = findViewById(R.id.productPrice);
                 price.setText(details.split(",")[1]);
+
+                tag.setText(details.split(",")[3]);
             } catch (Exception e) {
 
             }
 
-            productImage = findViewById(R.id.prodDetailsImage);
-            add = findViewById(R.id.add_pDetails);
-            minus = findViewById(R.id.minus_pDetails);
-            quantityLbl = findViewById(R.id.qty_pDetails);
-            addToReceipt = findViewById(R.id.addToReceipt_pDetails);
 
             try {
-                imageUrl = "http://" + ip + "/zantua/img/products/" + details.split(",")[details.split(",").length - 1].split("/")[3];
+                imageUrl = "http://" + ip + "/v2/zantua/img/products/" + details.split(",")[details.split(",").length - 1].split("/")[3];
                 Glide.with(this).load(imageUrl).into(productImage);
             } catch (Exception e) {
-                imageUrl = "http://" + ip + "/zantua/img/products/prod-placeholder.png";
+                imageUrl = "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png";
                 Glide.with(this).load(imageUrl).into(productImage);
             }
 
@@ -153,7 +159,6 @@ public class ProductDetails extends AppCompatActivity {
                 Type type = new TypeToken<ArrayList<Item>>() {
                 }.getType();
                 List<Item> list = gson.fromJson(response, type);
-                System.out.println(list);
                 for (int i = 0; i < list.size(); i++) {
 
                     String productData = list.get(i).toString();
@@ -167,7 +172,7 @@ public class ProductDetails extends AppCompatActivity {
 
                     ImageView image = new ImageView(getApplicationContext());
                     image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
-                    String imageUrl = list.get(i).getImg() == null ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://" + ip + "/zantua/img/products/prod-placeholder.png" : "http://" + ip + "/zantua/img/products/" + list.get(i).getImg().split("/")[3];
+                    String imageUrl = list.get(i).getImg() == null ? "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png" : list.get(i).getImg().isEmpty() ? "http://" + ip + "/v2/img/products/prod-placeholder.png" : "http://" + ip + "/v2/zantua/img/products/" + list.get(i).getImg().split("/")[3];
                     Glide.with(getApplicationContext()).load(imageUrl).into(image);
                     productRow.addView(image);
 

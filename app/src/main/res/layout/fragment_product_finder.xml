@@ -39,7 +39,20 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+        <TextView
+                android:id="@+id/noticeTextView"
+                android:visibility="invisible"
+                android:text="Loading items..."
+                android:textSize="15dp"
+                android:textStyle="italic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:indeterminate="true"/>
         <ScrollView
+                android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             <LinearLayout
@@ -47,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:id="@+id/listview" />
+                    android:id="@+id/listview"/>
         </ScrollView>
         <include
                 layout="@layout/sidebar_layout"
@@ -55,5 +68,19 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:visibility="invisible"/>
+        <TextView
+                android:id="@+id/loadMoreView"
+                android:visibility="invisible"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:text="LOAD MORE"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:textColor="@color/purple_700"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+        />
     </RelativeLayout>
 </LinearLayout>
