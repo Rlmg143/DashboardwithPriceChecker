@@ -45,7 +45,7 @@ public class pricechecker extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    String ip = "192.168.254.106";
+    String ip = Helper.ipAddress;
     private String url = "http://" + ip + "/v2/zantua/admin/get_product_with_barcode.php";
     String[] data = {};
     RequestQueue queue;
@@ -184,6 +184,7 @@ public class pricechecker extends Fragment {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                System.out.println(response);
                 jsonRespose = response;
                 if (!response.isEmpty()) {
                     note.setVisibility(View.GONE);
@@ -195,9 +196,10 @@ public class pricechecker extends Fragment {
                     price = response.split("\\|")[2];
 
                     try {
-                        imageUrl = "http://" + ip + "/v2/zantua/img/products/" + response.split("\\|")[response.split("\\|").length - 1].split("/")[3];
+                        imageUrl = "http://" + ip + "/v2/zantua/img/products/" + response.split("\\|")[response.split("\\|").length - 2].split("/")[3];
                         Glide.with(getActivity()).load(imageUrl).into(productImage);
                     } catch (Exception e) {
+                        System.out.println(e.getMessage());
                         imageUrl = "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png";
                         Glide.with(getActivity()).load(imageUrl).into(productImage);
                     }

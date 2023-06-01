@@ -31,9 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         showHomeFragment();
 
-
         bottomNavigationView = findViewById(R.id.bottom_nav);
-
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -74,28 +72,5 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.fragment_container, new HomeFragment());
         transaction.commit();
-    }
-
-    public void coffeeFilterpressed(View view) {
-    }
-
-    public void cantonFilterpressed(View view) {
-    }
-
-    public void allFilterpressed(View view) {
-    }
-
-    private void setUpdata() {
-        Product chilicanton = new Product("0", "Pancit Canton Chilimansi", R.drawable.pancit, "food");
-        productList.add(chilicanton);
-
-        Product calacanton = new Product("1", "Pancit Canton Calamansi", R.drawable.calamansi, "food");
-        productList.add(calacanton);
-
-        Product nescafeclassic = new Product("2", "Nescafe", R.drawable.nescafe, "beverage");
-        productList.add(nescafeclassic);
-
-        Product nescafecreamy = new Product("3", "Nescafe", R.drawable.nescafecream, "beverage");
-        productList.add(nescafecreamy);
     }
 }

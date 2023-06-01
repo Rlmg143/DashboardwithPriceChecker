@@ -32,7 +32,7 @@ public class ProductDetails extends AppCompatActivity {
     private ImageView productImage;
     private String imageUrl;
     private TextView tag;
-    String ip = "192.168.254.106";
+    String ip = Helper.ipAddress;
     RequestQueue queue;
 
     private String url = "http://" + ip + "/v2/zantua/admin/get_product_with_category.php";

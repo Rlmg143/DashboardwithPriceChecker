@@ -43,7 +43,7 @@ public class ProductFinder extends Fragment {
     private ImageButton showSidebarButton;
     private boolean isSidebarVisible = false;
     private LinearLayout sidebar;
-    String ip = "192.168.254.106";
+    String ip = Helper.ipAddress;
     private ArrayList<String> filters = new ArrayList<>();
     private ArrayList<CheckBox> checkBoxes = new ArrayList<>();
     private ArrayList<Item> filteredItems = new ArrayList<>();
@@ -56,6 +56,8 @@ public class ProductFinder extends Fragment {
     private String jsonResponse = "";
     private Button filterButton;
     private Button clearButton;
+    private Button ipBtn;
+    private EditText ipField;
     SearchView searchView;
     ScrollView scrollView;
     TextView noticeView;
@@ -120,6 +122,8 @@ public class ProductFinder extends Fragment {
         loadMoreView = view.findViewById(R.id.loadMoreView);
         filterButton = view.findViewById(R.id.filterButton);
         clearButton = view.findViewById(R.id.clearButton);
+        ipBtn = view.findViewById(R.id.ipAddressBtn);
+        ipField = view.findViewById(R.id.ipField);
         products = view.findViewById(R.id.listview);
 
         noticeView.setVisibility(View.VISIBLE);
@@ -250,6 +254,14 @@ public class ProductFinder extends Fragment {
             }
         });
 
+        ipBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!ipField.getText().toString().isEmpty()){
+                    Helper.ipAddress = ipField.getText().toString();
+                }
+            }
+        });
         return view;
     }
 
