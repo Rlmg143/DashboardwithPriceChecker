@@ -61,7 +61,7 @@ public class ProductFinder extends Fragment {
     TextView noticeView;
     TextView loadMoreView;
     private int limiter = 20;
-
+    private int filteredLimiter = 20;
     private String url = "http://" + ip + "/v2/zantua/admin/get_products.php";
 
     Spinner spinner;
@@ -130,6 +130,8 @@ public class ProductFinder extends Fragment {
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                filteredLimiter = 20;
+                limiter = 20;
                 if (filters.isEmpty()) {
                     filteredItems.clear();
                     products.removeAllViews();
@@ -148,6 +150,8 @@ public class ProductFinder extends Fragment {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                limiter = 20;
+                filteredLimiter = 20;
 
                 for (CheckBox checkBox : checkBoxes) {
                     checkBox.setChecked(false);
@@ -157,6 +161,7 @@ public class ProductFinder extends Fragment {
                 if (!filteredItems.isEmpty()){
                     filteredItems.clear();
                     products.removeAllViews();
+
                     request();
                 }
 
@@ -217,11 +222,13 @@ public class ProductFinder extends Fragment {
             @Override
             public void onScrollChanged() {
                 if (scrollView.getChildAt(0).getBottom() <= (scrollView.getHeight() + scrollView.getScrollY())) {
-                    if (filteredItems.size() >= 20) {
-                        scrollView.setPadding(0, 0, 0, 60);
-                        loadMoreView.setVisibility(View.VISIBLE);
-                    }
+                    scrollView.setPadding(0, 0, 0, 60);
+                    loadMoreView.setVisibility(View.VISIBLE);
 
+                    if (!filters.isEmpty() && filteredItems.size() < 20) {
+                        scrollView.setPadding(0, 0, 0, 0);
+                        loadMoreView.setVisibility(View.GONE);
+                    }
                 } else {
                     scrollView.setPadding(0, 0, 0, 0);
                     loadMoreView.setVisibility(View.GONE);
@@ -233,6 +240,10 @@ public class ProductFinder extends Fragment {
             @Override
             public void onClick(View v) {
                 limiter += 20;
+                if (!filters.isEmpty()){
+                    filteredLimiter += 20;
+                    System.out.println(filteredLimiter);
+                }
                 scrollView.setPadding(0, 0, 0, 0);
                 loadMoreView.setVisibility(View.GONE);
                 fetchData();
@@ -243,9 +254,10 @@ public class ProductFinder extends Fragment {
     }
 
     private void fetchData() {
-
+        scrollView.setPadding(0, 0, 0, 0);
+        loadMoreView.setVisibility(View.GONE);
         if (!filters.isEmpty()) {
-            products.removeAllViews();
+//            products.removeAllViews();
             filteredItems.clear();
             for (int i = 0; i < list.size(); i++) {
                 if (filters.contains(list.get(i).getTag().split(",")[0].toLowerCase())) {
@@ -260,7 +272,7 @@ public class ProductFinder extends Fragment {
                 }
             }
 
-            for (int i = 0; i < filteredItems.size(); i++) {
+            for (int i = filteredLimiter - 20; i < filteredLimiter; i++) {
                 try {
                     if (filters.contains(filteredItems.get(i).getTag().split(",")[0].toLowerCase())) {
                         LinearLayout row = new LinearLayout(getActivity().getApplicationContext());
