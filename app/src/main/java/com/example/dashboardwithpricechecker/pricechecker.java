@@ -49,7 +49,7 @@ public class pricechecker extends Fragment {
     private String url = "http://" + ip + "/v2/zantua/admin/get_product_with_barcode.php";
     String[] data = {};
     RequestQueue queue;
-
+    private String jsonRespose = "";
     private Button minus;
     private Button add;
     private Button addToReceipt;
@@ -127,6 +127,7 @@ public class pricechecker extends Fragment {
         addToReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println(jsonRespose);
                 if (quantity > 0) {
                     List<Item> cartContents = PrefConfig.readListFromPref(getActivity().getApplicationContext());
 
@@ -137,8 +138,8 @@ public class pricechecker extends Fragment {
                     double finalPrice = Double.parseDouble(price) * quantity;
 
                     Item item = checkExist(name, cartContents);
-                    if (item == null){
-                        cartContents.add(new Item(name, "" + price, quantity, "", "", "0", imageUrl));
+                    if (item == null) {
+                        cartContents.add(new Item(name, "" + price, quantity, jsonRespose.split("\\|")[1].split(",")[0], "", "0", imageUrl, ""));
                     } else {
                         double newPrice = Double.parseDouble(item.getPrice()) + finalPrice;
                         int newQty = item.getQuantity() + quantity;
@@ -149,7 +150,7 @@ public class pricechecker extends Fragment {
 
                     PrefConfig.writeListInPref(getActivity().getApplicationContext(), cartContents);
 
-                    Toast.makeText(getActivity().getApplicationContext(), "Item added to cart.", Toast.LENGTH_LONG).show();
+                    increaseUnitSold(jsonRespose.split("\\|")[jsonRespose.split("\\|").length - 1]);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Please select at least 1(one) quantity.", Toast.LENGTH_LONG).show();
                 }
@@ -183,6 +184,7 @@ public class pricechecker extends Fragment {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                jsonRespose = response;
                 if (!response.isEmpty()) {
                     note.setVisibility(View.GONE);
                     pName.setText(response.split("\\|")[0]);
@@ -195,7 +197,7 @@ public class pricechecker extends Fragment {
                     try {
                         imageUrl = "http://" + ip + "/v2/zantua/img/products/" + response.split("\\|")[response.split("\\|").length - 1].split("/")[3];
                         Glide.with(getActivity()).load(imageUrl).into(productImage);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         imageUrl = "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png";
                         Glide.with(getActivity()).load(imageUrl).into(productImage);
                     }
@@ -302,19 +304,32 @@ public class pricechecker extends Fragment {
             }
         });
         queue.add(request);
-        System.out.println(tag);
-
-
     }
 
-    public Item checkExist(String name, List<Item> list){
+    public Item checkExist(String name, List<Item> list) {
         Item item = null;
-        for(int i = 0; i < list.size(); i++){
-            if (list.get(i).getName().equalsIgnoreCase(name)){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getName().equalsIgnoreCase(name)) {
                 item = list.get(i);
                 break;
             }
         }
         return item;
+    }
+
+    private void increaseUnitSold(String stockNo) {
+        queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, "http://" + ip + "/v2/zantua/admin/increment_product_sold.php?stockNo=" + stockNo, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getActivity().getApplicationContext(), "Item added to cart.", Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+            }
+        });
+        queue.add(request);
     }
 }

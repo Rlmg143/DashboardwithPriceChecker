@@ -156,6 +156,7 @@ public class Receipt extends Fragment {
     }
 
     private void fetchCart(LinearLayout cart) {
+        System.out.println(cartContents);
         cart.removeAllViews();
         try {
             if (stringQuery.isEmpty()) {
@@ -187,7 +188,7 @@ public class Receipt extends Fragment {
         rowParams.setMargins(5, 0, 8, 20);
         row.setLayoutParams(rowParams);
 
-        LinearLayout cardView = createItemCard(cartContents.get(i).getName(), cartContents.get(i).getPrice(), "Food", cartContents.get(i).getImg(), "" + cartContents.get(i).getQuantity(), "");
+        LinearLayout cardView = createItemCard(cartContents.get(i).getName(), cartContents.get(i).getPrice(), cartContents.get(i).getTag(), cartContents.get(i).getImg(), "" + cartContents.get(i).getQuantity(), "");
         row.addView(cardView);
 
         cart.addView(row);
@@ -392,7 +393,7 @@ public class Receipt extends Fragment {
 
         TextView productName = new TextView(getActivity().getApplicationContext());
         productName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        productName.setText(name);
+        productName.setText(name + " (" + prodQuantity + "x)");
         productName.setTypeface(null, Typeface.BOLD);
         productName.setTextSize(20);
 
@@ -405,7 +406,7 @@ public class Receipt extends Fragment {
         );
         categoryParams.setMargins(0, 8, 0, 8);
         category.setLayoutParams(categoryParams);
-        category.setText("FOOD");
+        category.setText(categ);
         category.setTextSize(12);
         category.setBackgroundResource(R.drawable.round_corners);
         category.setTextColor(Color.WHITE);
@@ -473,15 +474,6 @@ public class Receipt extends Fragment {
         });
         l3.addView(plusIcon);
 
-        final String productData = data;
-        l1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), ProductDetails.class);
-                intent.putExtra("productDetails", productData);
-                startActivity(intent);
-            }
-        });
         cardview.addView(l1);
 
 //        TextView test = new TextView(getActivity().getApplicationContext());

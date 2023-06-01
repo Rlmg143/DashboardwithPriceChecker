@@ -57,6 +57,8 @@ public class ProductDetails extends AppCompatActivity {
 
         if (extras != null) {
             final String details = extras.getString("productDetails");
+            System.out.println(details);
+
             try {
                 url += "?tag=" + details.split(",")[3];
                 TextView name = findViewById(R.id.productName);
@@ -72,7 +74,7 @@ public class ProductDetails extends AppCompatActivity {
 
 
             try {
-                imageUrl = "http://" + ip + "/v2/zantua/img/products/" + details.split(",")[details.split(",").length - 1].split("/")[3];
+                imageUrl = "http://" + ip + "/v2/zantua/img/products/" + details.split(",")[7].split("/")[3];
                 Glide.with(this).load(imageUrl).into(productImage);
             } catch (Exception e) {
                 imageUrl = "http://" + ip + "/v2/zantua/img/products/prod-placeholder.png";
@@ -103,6 +105,7 @@ public class ProductDetails extends AppCompatActivity {
 
                 @Override
                 public void onClick(View v) {
+                    System.out.println(details);
                     if (quantity > 0) {
                         List<Item> cartContents = PrefConfig.readListFromPref(getApplicationContext());
 
@@ -113,7 +116,7 @@ public class ProductDetails extends AppCompatActivity {
 
                         Item item = checkExist(details.split(",")[0], cartContents);
                         if (item == null) {
-                            cartContents.add(new Item(details.split(",")[0], "" + price, quantity, "", "", "0", imageUrl));
+                            cartContents.add(new Item(details.split(",")[0], "" + price, quantity, details.split(",")[3], "", "0", imageUrl, ""));
                         } else {
                             double newPrice = Double.parseDouble(item.getPrice()) + price;
                             int newQty = item.getQuantity() + quantity;
@@ -125,7 +128,7 @@ public class ProductDetails extends AppCompatActivity {
 
                         PrefConfig.writeListInPref(getApplicationContext(), cartContents);
 
-                        Toast.makeText(getApplicationContext(), "Item added to cart.", Toast.LENGTH_LONG).show();
+                        increaseUnitSold(details.split(",")[details.split(",").length - 1]);
                     } else {
                         Toast.makeText(getApplicationContext(), "Please select at least 1(one) quantity.", Toast.LENGTH_LONG).show();
                     }
@@ -155,6 +158,7 @@ public class ProductDetails extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                System.out.println(response);
                 Gson gson = new Gson();
                 Type type = new TypeToken<ArrayList<Item>>() {
                 }.getType();
@@ -230,6 +234,23 @@ public class ProductDetails extends AppCompatActivity {
 
 
                 }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+            }
+        });
+        queue.add(request);
+    }
+
+    private void increaseUnitSold(String stockNo) {
+        System.out.println("http://" + ip + "/v2/zantua/admin/increment_product_sold.php?stockNo=" + stockNo);
+        queue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, "http://" + ip + "/v2/zantua/admin/increment_product_sold.php?stockNo=" + stockNo, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getApplicationContext(), "Item added to cart.", Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override

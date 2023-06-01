@@ -10,8 +10,9 @@ public class Item implements Serializable {
     private String desc;
     private String unitSold;
     private String img;
+    private String stockNo;
 
-    public Item(String name, String cost, int quantity, String tag, String desc, String unitSold, String img) {
+    public Item(String name, String cost, int quantity, String tag, String desc, String unitSold, String img, String stockNo) {
         this.name = name;
         this.cost = cost;
         this.quantity = quantity;
@@ -19,6 +20,7 @@ public class Item implements Serializable {
         this.desc = desc;
         this.unitSold = unitSold;
         this.img = img;
+        this.stockNo = stockNo;
     }
 
     public String getTag() {
@@ -69,9 +71,13 @@ public class Item implements Serializable {
         return img;
     }
 
+    public String getStockNo() {
+        return stockNo;
+    }
+
     @Override
     public String toString() {
-        return name + "," + cost + "," + quantity + "," + tag + "," + desc + "," + unitSold + "," + img;
+        return name + "," + cost + "," + quantity + "," + tag + "," + desc + "," + unitSold + "," + img + "," + stockNo;
 //        return "Item{" +
 //                "name='" + name + '\'' +
 //                ", price='" + cost + '\'' +
