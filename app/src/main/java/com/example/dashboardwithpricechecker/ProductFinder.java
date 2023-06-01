@@ -141,6 +141,7 @@ public class ProductFinder extends Fragment {
                     }
                 }
                 request();
+                hideSidebar();
             }
         });
 
@@ -180,6 +181,7 @@ public class ProductFinder extends Fragment {
                 return false;
             }
         });
+
         showSidebarButton = view.findViewById(R.id.showSidebarButton);
         sidebar = view.findViewById(R.id.sidebar);
 

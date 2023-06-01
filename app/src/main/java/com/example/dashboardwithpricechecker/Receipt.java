@@ -124,7 +124,7 @@ public class Receipt extends Fragment {
 
                 PrefConfig.writeListInPref(getActivity().getApplicationContext(), new ArrayList<>());
                 cart.removeAllViews();
-                subTotalLbl.setText("₱0.0");
+                subTotalLbl.setText("₱0.00");
             }
         });
 
