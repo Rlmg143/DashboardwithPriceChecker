@@ -6,13 +6,13 @@
 
     <item android:title="Search Product"
           android:id="@+id/mnu_product"
-          android:icon="@drawable/cart"/>
+          android:icon="@drawable/ic_baseline_search_24"/>
 
 
     <item android:title="Price Checker"
           android:id="@+id/mnu_pricechecker"
           android:icon="@drawable/ic_price"/>
-    <item android:title="Receipt"
+    <item android:title="Cart"
           android:id="@+id/mnu_receipt"
-          android:icon="@drawable/ic_receipt"/>
+          android:icon="@drawable/cart"/>
 </menu>

@@ -148,17 +148,17 @@
                 android:text="Clear"/>
     </LinearLayout>
 
-    <EditText
-            android:layout_marginTop="150dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/ipField"/>
-    <Button
-            android:id="@+id/ipAddressBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Set IP"/>
+<!--    <EditText-->
+<!--            android:layout_marginTop="150dp"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:inputType="textPersonName"-->
+<!--            android:ems="10"-->
+<!--            android:id="@+id/ipField"/>-->
+<!--    <Button-->
+<!--            android:id="@+id/ipAddressBtn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Set IP"/>-->
 
 </LinearLayout>

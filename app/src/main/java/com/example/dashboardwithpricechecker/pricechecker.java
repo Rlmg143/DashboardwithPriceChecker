@@ -55,7 +55,7 @@ public class pricechecker extends Fragment {
     private Button addToReceipt;
     private TextView quantityLbl;
     private ImageView productImage;
-    private int quantity = 0;
+    private int quantity = 1;
     private String name = "", price = "", imageUrl = "", tag = "";
 
 
@@ -127,33 +127,8 @@ public class pricechecker extends Fragment {
         addToReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(jsonRespose);
-                if (quantity > 0) {
-                    List<Item> cartContents = PrefConfig.readListFromPref(getActivity().getApplicationContext());
-
-                    if (cartContents == null)
-                        cartContents = new ArrayList<>();
-
-
-                    double finalPrice = Double.parseDouble(price) * quantity;
-
-                    Item item = checkExist(name, cartContents);
-                    if (item == null) {
-                        cartContents.add(new Item(name, "" + price, quantity, jsonRespose.split("\\|")[1].split(",")[0], "", "0", imageUrl, ""));
-                    } else {
-                        double newPrice = Double.parseDouble(item.getPrice()) + finalPrice;
-                        int newQty = item.getQuantity() + quantity;
-                        item.setPrice("" + newPrice);
-                        item.setQuantity(newQty);
-                        cartContents.set(cartContents.indexOf(item), item);
-                    }
-
-                    PrefConfig.writeListInPref(getActivity().getApplicationContext(), cartContents);
-
-                    increaseUnitSold(jsonRespose.split("\\|")[jsonRespose.split("\\|").length - 1]);
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Please select at least 1(one) quantity.", Toast.LENGTH_LONG).show();
-                }
+                quantity-=1;
+                addToReceipt();
             }
         });
 
@@ -171,6 +146,35 @@ public class pricechecker extends Fragment {
             }
         });
         return view;
+    }
+
+    private void addToReceipt() {
+        if (quantity > 0) {
+            List<Item> cartContents = PrefConfig.readListFromPref(getActivity().getApplicationContext());
+
+            if (cartContents == null)
+                cartContents = new ArrayList<>();
+
+
+            double finalPrice = Double.parseDouble(price) * quantity;
+
+            Item item = checkExist(name, cartContents);
+            if (item == null) {
+                cartContents.add(new Item(name, "" + price, quantity, jsonRespose.split("\\|")[1].split(",")[0], "", "0", imageUrl, ""));
+            } else {
+                double newPrice = Double.parseDouble(item.getPrice()) + finalPrice;
+                int newQty = item.getQuantity() + quantity;
+                item.setPrice("" + newPrice);
+                item.setQuantity(newQty);
+                cartContents.set(cartContents.indexOf(item), item);
+            }
+
+            PrefConfig.writeListInPref(getActivity().getApplicationContext(), cartContents);
+
+            increaseUnitSold(jsonRespose.split("\\|")[jsonRespose.split("\\|").length - 1]);
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), "Please select at least 1(one) quantity.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void fetchData(View view) {
@@ -292,6 +296,7 @@ public class pricechecker extends Fragment {
                         }
                     });
                     queue.add(requestRelated);
+                    addToReceipt();
 
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Barcode not found.", Toast.LENGTH_LONG).show();

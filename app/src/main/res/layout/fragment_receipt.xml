@@ -16,7 +16,7 @@
             android:background="@color/purple_700"
     >
         <TextView
-                android:text="Your Receipt"
+                android:text="Your Cart"
                 android:textColor="@color/white"
                 android:textSize="20dp"
                 android:gravity="center"
@@ -63,7 +63,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/resetreceipt"
-                        android:text="Reset Receipt"
+                        android:text="Reset Cart"
                         android:layout_weight="1"
                         android:layout_marginRight="8dp"
                         android:backgroundTint="@color/cadmium_red"
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:padding="10dp"
-            android:hint="Search an item"
+            android:hint="Search your cart"
             android:inputType="text"
             android:imeOptions=""
             android:ems="10"

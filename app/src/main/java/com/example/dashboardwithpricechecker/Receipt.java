@@ -36,6 +36,8 @@ import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
 import com.dantsu.escposprinter.exceptions.EscPosEncodingException;
 import com.dantsu.escposprinter.exceptions.EscPosParserException;
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -73,7 +75,10 @@ public class Receipt extends Fragment {
     public static final String PRODUCT_QUANTITY = "PROD_QUANTITY";
 
     private TextView search;
+    View rootView;
     LinearLayout cart;
+
+    private TextView pName, pTotal, pSubCategory, pCategory, pQty;
 
     public Receipt() {
         // Required empty public constructor
@@ -95,11 +100,17 @@ public class Receipt extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        cartContents = PrefConfig.readListFromPref(getActivity().getApplicationContext());
+        cartContents = PrefConfig.readListFromPref(getActivity().getApplicationContext()) == null ? new ArrayList<>() : PrefConfig.readListFromPref(getActivity().getApplicationContext());
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_receipt, container, false);
+        rootView = inflater.inflate(R.layout.fragment_receipt, container, false);
 //        PrefConfig.writeListInPref(getActivity().getApplicationContext(), new ArrayList<>());
         cart = rootView.findViewById(R.id.cart);
+
+        pName = rootView.findViewById(R.id.receiptProductName);
+        pTotal = rootView.findViewById(R.id.receiptTotal);
+        pCategory = rootView.findViewById(R.id.receiptCategory);
+        pQty = rootView.findViewById(R.id.receiptQty);
+
         subTotalLbl = rootView.findViewById(R.id.subtotal_fReceipt);
 
         fetchCart(cart);
@@ -156,8 +167,8 @@ public class Receipt extends Fragment {
     }
 
     private void fetchCart(LinearLayout cart) {
-        System.out.println(cartContents);
         cart.removeAllViews();
+        subTotal = 0;
         try {
             if (stringQuery.isEmpty()) {
                 for (int i = 0; i < cartContents.size(); i++) {
@@ -173,8 +184,10 @@ public class Receipt extends Fragment {
                 }
             }
 
+            subTotalLbl.setText("₱" + new DecimalFormat("0.00").format(subTotal));
+
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
 
     }
@@ -188,7 +201,7 @@ public class Receipt extends Fragment {
         rowParams.setMargins(5, 0, 8, 20);
         row.setLayoutParams(rowParams);
 
-        LinearLayout cardView = createItemCard(cartContents.get(i).getName(), cartContents.get(i).getPrice(), cartContents.get(i).getTag(), cartContents.get(i).getImg(), "" + cartContents.get(i).getQuantity(), "");
+        LinearLayout cardView = createItemCard(cartContents.get(i).getName(), cartContents.get(i).getPrice(), cartContents.get(i).getTag(), cartContents.get(i).getImg(), "" + cartContents.get(i).getQuantity(), "", i);
         row.addView(cardView);
 
         cart.addView(row);
@@ -203,139 +216,13 @@ public class Receipt extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-//        deleteRowButton = view.findViewById(R.id.resetreceipt);
-//        deleteRowButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int rowCount = tableLayout.getChildCount();
-//                for (int i = 1; i < rowCount; i++) {
-//                    View rowView = tableLayout.getChildAt(i);
-//                    if (rowView instanceof TableRow) {
-//                        TableRow tableRow = (TableRow) rowView;
-//                        int childCount = tableRow.getChildCount();
-//                        for (int j = 0; j < childCount; j++) {
-//                            View childView = tableRow.getChildAt(j);
-//                            if (childView instanceof TextView) {
-//                                ((TextView) childView).setText("");
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//
-//        tableLayout = view.findViewById(R.id.receipttable);
-//        TableRow tablerow = view.findViewById(R.id.tablerow);
-//
-//        // Remove the TableRow from its current parent view, if any
-//        ViewGroup parent = (ViewGroup) tablerow.getParent();
-//        if (parent != null) {
-//            parent.removeView(tablerow);
-//        }
-//
-//        tableLayout.addView(tablerow);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-        // Remove the TableRow from the TableLayout, if it's still there
-//        if (tableLayout != null) {
-//            TableRow tablerow = getView().findViewById(R.id.tablerow);
-//            if (tablerow != null) {
-//                tableLayout.removeView(tablerow);
-//            }
-//        }
     }
 
-    public void printReceipt() {
-// FOR BLUETOOTH PERMISSION
-        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH}, 1);
-        } else if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-        }
-//
-//        for(BluetoothConnection b : new BluetoothConnections().getList()) {
-//            Log.d("BLUETOOTH", b.getDevice().getName());
-//        }
-
-        BluetoothConnection[] connections = new BluetoothConnections().getList();
-        String[] strCons = new String[connections.length];
-        for (int i = 0; i < connections.length; i++) {
-            strCons[i] = connections[i].getDevice().getName();
-        }
-
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Select bluetooth connection")
-                .setItems(strCons, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            BluetoothConnection connection = connections[which].connect();
-
-                            EscPosPrinter printer = new EscPosPrinter(connection, 203, 48f, 32);
-
-                            StringBuilder sb = new StringBuilder();
-                            double total = 0;
-
-                            sb.append("[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, getActivity().getApplicationContext().getResources().getDrawableForDensity(R.drawable.zantualogo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n");
-                            sb.append("[C] " + new SimpleDateFormat("EEE yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime()) + "\n\n");
-                            for (ContentValues cv : products) {
-                                sb.append("[L] " + shortenText(cv.getAsString(PRODUCT_NAME)) + "\t P" + cv.getAsDouble(PRODUCT_COST) + "\n");
-                                total += cv.getAsDouble(PRODUCT_COST);
-                            }
-                            sb.append("[C] \n-------------------------\n");
-                            sb.append("[L] Total: \t" + total);
-                            sb.append("[C]\n");
-                            sb.append("[C]\n");
-                            sb.append("[C]\n");
-                            sb.append("[C] Thanks for supporting\n");
-                            sb.append("[C] local business\n");
-                            printer.printFormattedText(sb.toString());
-                        } catch (EscPosConnectionException e) {
-                            Log.d("ERROR", e.getMessage());
-                            throw new RuntimeException(e);
-                        } catch (EscPosEncodingException e) {
-                            Log.d("ERROR", e.getMessage());
-                            throw new RuntimeException(e);
-                        } catch (EscPosBarcodeException e) {
-                            Log.d("ERROR", e.getMessage());
-                            throw new RuntimeException(e);
-                        } catch (EscPosParserException e) {
-                            Log.d("ERROR", e.getMessage());
-                            throw new RuntimeException(e);
-                        }
-                    }
-                })
-                .create()
-                .show();
-
-
-// FOR BLUETOOTH THERMAL PRINTING
-//        BluetoothConnection connection = BluetoothPrintersConnections.selectFirstPaired();
-//        try {
-//            EscPosPrinter printer = new EscPosPrinter(connection, 203, 48f, 32);
-//
-        // FORMAT PRINTING
-//            String test = "[C] Putaena mo kev!";
-//            printer.printFormattedText(test);
-//        } catch (EscPosConnectionException e) {
-//            Log.d("ERROR", e.getMessage());
-//            throw new RuntimeException(e);
-//        } catch (EscPosEncodingException e) {
-//            Log.d("ERROR", e.getMessage());
-//            throw new RuntimeException(e);
-//        } catch (EscPosBarcodeException e) {
-//            Log.d("ERROR", e.getMessage());
-//            throw new RuntimeException(e);
-//        } catch (EscPosParserException e) {
-//            Log.d("ERROR", e.getMessage());
-//            throw new RuntimeException(e);
-//        }
-    }
 
     public String shortenText(String str) {
         if (str.length() > 10) {
@@ -345,7 +232,7 @@ public class Receipt extends Fragment {
         return str;
     }
 
-    private LinearLayout createItemCard(String name, String price, String categ, String imageUrl, String prodQuantity, String data) {
+    private LinearLayout createItemCard(String itemName, String price, String categ, String imageUrl, String prodQuantity, String data, int index) {
 
         LinearLayout cardContainer = new LinearLayout(getActivity().getApplicationContext());
         cardContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
@@ -376,7 +263,6 @@ public class Receipt extends Fragment {
         l1.setOrientation(LinearLayout.HORIZONTAL);
         l1.setLayoutParams(params);
 
-
         ImageView image = new ImageView(getActivity().getApplicationContext());
         image.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
         Glide.with(getActivity()).load(imageUrl).into(image);
@@ -385,7 +271,7 @@ public class Receipt extends Fragment {
 
         LinearLayout l2 = new LinearLayout(getActivity().getApplicationContext());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(10, 0,0,0);
+        layoutParams.setMargins(10, 0, 0, 0);
         l2.setLayoutParams(layoutParams);
         l2.setOrientation(LinearLayout.VERTICAL);
 
@@ -393,7 +279,7 @@ public class Receipt extends Fragment {
 
         TextView productName = new TextView(getActivity().getApplicationContext());
         productName.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        productName.setText(name + " (" + prodQuantity + "x)");
+        productName.setText(itemName + " (" + prodQuantity + "x)");
         productName.setTypeface(null, Typeface.BOLD);
         productName.setTextSize(20);
 
@@ -483,6 +369,74 @@ public class Receipt extends Fragment {
 //        cardContainer.addView(l3);
 
         cardContainer.addView(cardview);
+
+        cardContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity(), R.style.BottomSheetDialogTheme);
+                View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.layout_bottom_sheet, (LinearLayout) rootView.findViewById(R.id.bottomSheetContainer));
+
+                ImageView receiptImage = bottomSheetView.findViewById(R.id.receiptImage);
+                Glide.with(getActivity()).load(imageUrl).into(receiptImage);
+
+                ((TextView) bottomSheetView.findViewById(R.id.receiptProductName)).setText(itemName);
+
+                double total = (Double.parseDouble(price) / Integer.parseInt(prodQuantity)) * Integer.parseInt(prodQuantity);
+                ((TextView) bottomSheetView.findViewById(R.id.receiptTotal)).setText("" + total);
+
+                ((TextView) bottomSheetView.findViewById(R.id.receiptCategory)).setText(categ);
+
+                ((TextView) bottomSheetView.findViewById(R.id.receiptDecrease)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        double originalPrice = (Double.parseDouble(price) / Integer.parseInt(prodQuantity));
+                        int quantity = Integer.parseInt(((TextView) bottomSheetView.findViewById(R.id.receiptQty)).getText().toString());
+                        if (quantity > 1) {
+                            quantity -= 1;
+
+                            ((TextView) bottomSheetView.findViewById(R.id.receiptQty)).setText("" + quantity);
+
+                            double newTotal = originalPrice * quantity;
+                            ((TextView) bottomSheetView.findViewById(R.id.receiptTotal)).setText("" + new DecimalFormat("0.00").format(newTotal));
+                        }
+                    }
+                });
+                ((TextView) bottomSheetView.findViewById(R.id.receiptQty)).setText(prodQuantity);
+                ((TextView) bottomSheetView.findViewById(R.id.receiptIncrease)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        double originalPrice = (Double.parseDouble(price) / Integer.parseInt(prodQuantity));
+                        int quantity = Integer.parseInt(((TextView) bottomSheetView.findViewById(R.id.receiptQty)).getText().toString());
+                        quantity += 1;
+
+                        ((TextView) bottomSheetView.findViewById(R.id.receiptQty)).setText("" + quantity);
+
+                        double newTotal = originalPrice * quantity;
+                        ((TextView) bottomSheetView.findViewById(R.id.receiptTotal)).setText("" + new DecimalFormat("0.00").format(newTotal));
+
+                    }
+                });
+
+                ((Button) bottomSheetView.findViewById(R.id.saveBtn)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        cartContents.get(index).setPrice(((TextView) bottomSheetView.findViewById(R.id.receiptTotal)).getText().toString());
+                        cartContents.get(index).setQuantity(Integer.parseInt(((TextView) bottomSheetView.findViewById(R.id.receiptQty)).getText().toString()));
+
+                        PrefConfig.writeListInPref(getActivity().getApplicationContext(), cartContents);
+
+                        Toast.makeText(getActivity().getApplicationContext(), "Successfully updated item details.", Toast.LENGTH_LONG).show();
+                        bottomSheetDialog.dismiss();
+
+                        fetchCart(cart);
+                    }
+                });
+
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+            }
+        });
         return cardContainer;
     }
 
